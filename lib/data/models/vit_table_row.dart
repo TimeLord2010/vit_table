@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-class TableRowModel {
+class VitTableRow {
   final List<Widget> cells;
   final EdgeInsets cellsPadding;
 
-  const TableRowModel({
+  const VitTableRow({
     required this.cells,
     this.cellsPadding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
   });

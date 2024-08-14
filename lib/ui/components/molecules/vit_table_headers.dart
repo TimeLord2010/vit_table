@@ -4,6 +4,9 @@ import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
 import 'package:vit_table/ui/theme/colors.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
+/// Build the header of a VitTable.
+///
+/// Creates the text in bold of each column and draws a line below it.
 class VitTableHeaders extends StatelessWidget {
   const VitTableHeaders({
     super.key,

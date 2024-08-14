@@ -1,24 +1,29 @@
 import 'package:flutter/widgets.dart';
 import 'package:vit_table/ui/components/atoms/vit_button.dart';
 import 'package:vit_table/ui/theme/colors.dart';
+import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 class PageNavigatorButtom extends StatelessWidget {
+  /// MEANT FOR INTERNAL USE ONLY
   const PageNavigatorButtom({
     super.key,
     required this.pageIndex,
     required this.isSelected,
     required this.onSelected,
+    required this.style,
   });
 
   final int pageIndex;
   final bool isSelected;
   final void Function() onSelected;
+  final VitTableStyle style;
 
   Color? get backgroundColor {
     if (isSelected) {
-      return primary3;
+      var color = style.pageNavigatorSelectedColor;
+      return color ?? const Color.fromARGB(255, 85, 137, 255);
     }
-    return white;
+    return style.pageNavigatorColor ?? white;
   }
 
   @override

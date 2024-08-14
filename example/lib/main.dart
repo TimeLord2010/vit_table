@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vit_table/data/models/table_row_model.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/data/models/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/vit_table.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
@@ -55,14 +55,14 @@ class MyApp extends StatelessWidget {
         VitTableColumn(title: 'Actions', width: 100),
       ],
       rows: [
-        TableRowModel(
+        VitTableRow(
           cells: [
             Checkbox(value: true, onChanged: (value) {}),
             const Text('Administrator'),
             const Icon(Icons.edit),
           ],
         ),
-        TableRowModel(
+        VitTableRow(
           cells: [
             Checkbox(value: false, onChanged: (value) {}),
             const Text('Manager'),
@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
         VitTableColumn(title: 'Birth', width: 100, priority: 3),
       ],
       rows: const [
-        TableRowModel(
+        VitTableRow(
           cells: [
             Text('1'),
             Text('Roy Williamson'),
@@ -93,7 +93,7 @@ class MyApp extends StatelessWidget {
             Text('6/13/2001'),
           ],
         ),
-        TableRowModel(
+        VitTableRow(
           cells: [
             Text('2'),
             Text('Thomas Casey'),
@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
             Text('5/27/1988'),
           ],
         ),
-        TableRowModel(
+        VitTableRow(
           cells: [
             Text('3'),
             Text('Josephine Floyd'),
@@ -109,7 +109,7 @@ class MyApp extends StatelessWidget {
             Text('12/9/1986'),
           ],
         ),
-        TableRowModel(
+        VitTableRow(
           cells: [
             Text('4'),
             Text('Susan Harvey'),

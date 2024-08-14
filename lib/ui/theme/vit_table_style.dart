@@ -19,6 +19,11 @@ class VitTableStyle {
   /// Widget to show when the table is empty
   final Widget? onEmptyWidget;
 
+  /// The color used in the selected page button.
+  final Color? pageNavigatorSelectedColor;
+
+  final Color? pageNavigatorColor;
+
   const VitTableStyle({
     this.height,
     this.minHeight,
@@ -26,5 +31,7 @@ class VitTableStyle {
     this.rowHeight,
     this.innerBottom,
     this.onEmptyWidget,
+    this.pageNavigatorColor,
+    this.pageNavigatorSelectedColor,
   });
 }

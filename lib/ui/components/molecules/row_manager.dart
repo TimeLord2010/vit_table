@@ -5,8 +5,12 @@ import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
 import 'package:vit_table/ui/protocols/is_mobile.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
-class VitTableRow extends StatelessWidget {
-  const VitTableRow({
+/// Builds the row on a VitTable.
+///
+/// This widget hightlights the entire row when the mouse is over it.
+class RowManager extends StatelessWidget {
+  /// MEANT FOR INTERNAL USE ONLY.
+  const RowManager({
     super.key,
     required this.rowIndex,
     required this.validColumns,

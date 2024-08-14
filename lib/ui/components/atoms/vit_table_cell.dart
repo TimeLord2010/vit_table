@@ -1,7 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 
+/// Displays the cell of a VitTable.
+///
+/// This widget sets the padding and size constraints of the child widget.
 class VitTableCell extends StatelessWidget {
+  /// MEANT FOR INTERNAL USE ONLY.
   const VitTableCell({
     super.key,
     required this.column,

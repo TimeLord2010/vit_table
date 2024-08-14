@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/ui/components/molecules/row_manager.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_headers.dart';
-import 'package:vit_table/ui/components/molecules/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/page_navigator.dart';
 import 'package:vit_table/ui/theme/colors.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
-import '../../../../../data/models/table_row_model.dart' as row;
+import '../../../data/models/vit_table_row.dart' as row;
 
 class VitTable extends StatelessWidget {
   const VitTable({
@@ -22,7 +22,7 @@ class VitTable extends StatelessWidget {
   });
 
   final List<VitTableColumn> columns;
-  final List<row.TableRowModel> rows;
+  final List<row.VitTableRow> rows;
   final int? pageCount, currentPageIndex;
   final void Function(int pageIndex)? onPageSelected;
   final VitTableStyle style;
@@ -49,6 +49,7 @@ class VitTable extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         PageNavigator(
+          style: style,
           currentPageIndex: currentPageIndex!,
           pagesCount: pageCount!,
           onPageSelected: onPageSelected!,
@@ -93,6 +94,7 @@ class VitTable extends StatelessWidget {
           currentColumns.remove(leastPriorityColumn);
         }
 
+        // Creating container to build the border.
         return Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -100,19 +102,17 @@ class VitTable extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(8),
           ),
+
+          // Preventing the contents of the inner container from overflowing.
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: DecoratedBox(
-              decoration: const BoxDecoration(
-                color: white,
+            child: Container(
+              color: white,
+              constraints: BoxConstraints(
+                minHeight: style.minHeight ?? style.height ?? 0,
+                maxHeight: style.height ?? double.infinity,
               ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: style.minHeight ?? style.height ?? 0,
-                  maxHeight: style.height ?? double.infinity,
-                ),
-                child: _table(currentColumns, constraints, invalidColumns),
-              ),
+              child: _table(currentColumns, invalidColumns),
             ),
           ),
         );
@@ -120,11 +120,7 @@ class VitTable extends StatelessWidget {
     );
   }
 
-  Column _table(
-    List<VitTableColumn> currentColumns,
-    BoxConstraints constraints,
-    List<int> invalidColumns,
-  ) {
+  Column _table(List<VitTableColumn> currentColumns, List<int> invalidColumns) {
     var rows = _rows(
       invalidColumns: invalidColumns,
       currentColumns: currentColumns,
@@ -155,7 +151,7 @@ class VitTable extends StatelessWidget {
         'Number of cells must be equal to the number of columns',
       );
       var validCells = cells.removeIndices(invalidColumns.toSet());
-      return VitTableRow(
+      return RowManager(
         rowIndex: index,
         validCells: validCells,
         validColumns: currentColumns,
@@ -164,6 +160,9 @@ class VitTable extends StatelessWidget {
     }
 
     if (rows.isEmpty) {
+      if (style.onEmptyWidget != null) {
+        return style.onEmptyWidget!;
+      }
       return const SizedBox(
         height: 150,
       );
@@ -181,17 +180,13 @@ class VitTable extends StatelessWidget {
           )
         else
           Expanded(
-            child: _scrollableRows(rowFromIndex),
+            child: ListView.builder(
+              itemBuilder: (context, index) => rowFromIndex(index),
+              itemCount: rows.length,
+            ),
           ),
         if (style.innerBottom != null) style.innerBottom!,
       ],
-    );
-  }
-
-  ListView _scrollableRows(Widget Function(int index) rowFromIndex) {
-    return ListView.builder(
-      itemBuilder: (context, index) => rowFromIndex(index),
-      itemCount: rows.length,
     );
   }
 }

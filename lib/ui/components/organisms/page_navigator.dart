@@ -1,18 +1,23 @@
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:vit_table/ui/components/molecules/page_navigator_button.dart';
+import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 class PageNavigator extends StatelessWidget {
+  /// MEANT FOR INTERNAL USE ONLY
   const PageNavigator({
     super.key,
     required this.currentPageIndex,
     required this.pagesCount,
     required this.onPageSelected,
+    required this.style,
     this.itemSize = 40,
     this.jumpPageOffset = 9,
     this.showEdgePages = false,
     this.showJumpPage = true,
   });
+
+  final VitTableStyle style;
 
   final double itemSize;
 
@@ -119,6 +124,7 @@ class PageNavigator extends StatelessWidget {
         return null;
       }
       return PageNavigatorButtom(
+        style: style,
         pageIndex: pageIndex,
         isSelected: pageIndex == currentPageIndex,
         onSelected: () => onPageSelected(pageIndex),
