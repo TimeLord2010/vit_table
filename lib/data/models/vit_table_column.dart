@@ -13,8 +13,11 @@ class VitTableColumn {
   final EdgeInsets cellsPadding;
   final int priority;
 
+  final void Function(bool asc)? onSort;
+
   VitTableColumn({
     required this.title,
+    this.onSort,
     this.width = 150,
     this.expandable = false,
     this.priority = 1,

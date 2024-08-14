@@ -19,6 +19,8 @@ class VitTable extends StatelessWidget {
     this.currentPageIndex,
     this.onPageSelected,
     this.style = const VitTableStyle(),
+    this.sortColumnIndex,
+    this.isAscSort = true,
   });
 
   final List<VitTableColumn> columns;
@@ -26,6 +28,8 @@ class VitTable extends StatelessWidget {
   final int? pageCount, currentPageIndex;
   final void Function(int pageIndex)? onPageSelected;
   final VitTableStyle style;
+  final int? sortColumnIndex;
+  final bool isAscSort;
 
   bool get hasPaginator {
     return currentPageIndex != null &&
@@ -130,6 +134,8 @@ class VitTable extends StatelessWidget {
         VitTableHeaders(
           columns: currentColumns,
           style: style,
+          sortingColumnIndex: sortColumnIndex,
+          isAscSort: isAscSort,
         ),
         switch (hasInfiniteHeight) {
           true => rows,

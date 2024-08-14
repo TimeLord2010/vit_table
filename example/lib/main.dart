@@ -8,8 +8,22 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<Profile> profiles = [
+    Profile('Administrator', DateTime.now()),
+    Profile('Manager', DateTime(2020, 1, 18)),
+    Profile('Student', DateTime(2024, 3, 5)),
+  ];
+
+  bool isAscSort = true;
+  int? sortColumnIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +63,51 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      sortColumnIndex: sortColumnIndex,
+      isAscSort: isAscSort,
       columns: [
         VitTableColumn(title: 'Select', width: 70),
-        VitTableColumn(title: 'Profile', expandable: true),
+        VitTableColumn(
+          title: 'Profile',
+          expandable: true,
+          onSort: (asc) {
+            _sort(1, (profile) => profile.name);
+          },
+        ),
+        VitTableColumn(
+          title: 'Created on',
+          onSort: (asc) {
+            _sort(2, (profile) => profile.createdAt.toString());
+          },
+        ),
         VitTableColumn(title: 'Actions', width: 100),
       ],
       rows: [
-        VitTableRow(
-          cells: [
-            Checkbox(value: true, onChanged: (value) {}),
-            const Text('Administrator'),
-            const Icon(Icons.edit),
-          ],
-        ),
-        VitTableRow(
-          cells: [
-            Checkbox(value: false, onChanged: (value) {}),
-            const Text('Manager'),
-            const Icon(Icons.edit),
-          ],
-        ),
+        for (var profile in profiles)
+          VitTableRow(
+            cells: [
+              Checkbox(
+                  value: profile.name.startsWith('A'), onChanged: (value) {}),
+              Text(profile.name),
+              Text(profile.createdAt.toString()),
+              const Icon(Icons.edit),
+            ],
+          )
       ],
     );
+  }
+
+  void _sort(int index, String Function(Profile) valueGetter) {
+    sortColumnIndex = index;
+    isAscSort = !isAscSort;
+    int Function(Profile, Profile) sortFn;
+    if (isAscSort) {
+      sortFn = (a, b) => valueGetter(a).compareTo(valueGetter(b));
+    } else {
+      sortFn = (a, b) => valueGetter(b).compareTo(valueGetter(a));
+    }
+    profiles.sort(sortFn);
+    setState(() {});
   }
 
   VitTable _simpleTable() {
@@ -120,4 +157,11 @@ class MyApp extends StatelessWidget {
       ],
     );
   }
+}
+
+class Profile {
+  String name;
+  DateTime createdAt;
+
+  Profile(this.name, this.createdAt);
 }
