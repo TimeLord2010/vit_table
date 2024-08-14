@@ -2,6 +2,7 @@ name: vit_table
 description: "A new Flutter package project."
 version: 0.0.1
 homepage:
+repository: https://github.com/TimeLord2010/vit_table
 
 environment:
   sdk: ^3.5.0
