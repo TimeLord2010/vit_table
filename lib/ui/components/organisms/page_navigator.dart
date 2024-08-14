@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:gap/gap.dart';
 import 'package:vit_table/ui/components/molecules/page_navigator_button.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
@@ -71,18 +70,18 @@ class PageNavigator extends StatelessWidget {
   List<Widget> _getItems() {
     var items = [
       _getFirstPage(),
-      const Gap(10),
+      const SizedBox(width: 10),
       _getPageItem(currentPageIndex - actualJump),
-      const Gap(5),
+      const SizedBox(width: 5),
       _getPageItem(currentPageIndex - 2),
       _getPageItem(currentPageIndex - 1),
       _getPageItem(currentPageIndex),
       _getPageItem(currentPageIndex + 1),
       _getPageItem(currentPageIndex + 2),
-      const Gap(5),
+      const SizedBox(width: 5),
       if (currentPageIndex < (pagesCount - 1) - actualJump)
         _getPageItem(currentPageIndex + actualJump),
-      const Gap(10),
+      const SizedBox(width: 10),
       _getLastPage(),
     ];
     return items.whereType<Widget>().toList();
