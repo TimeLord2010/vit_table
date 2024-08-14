@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
-import 'package:vit_table/ui/components/atoms/adaptative_vexapnded.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_headers.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/page_navigator.dart';
 import 'package:vit_table/ui/theme/colors.dart';
+import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 import '../../../../../data/models/table_row_model.dart' as row;
 
@@ -18,18 +18,14 @@ class VitTable extends StatelessWidget {
     this.pageCount,
     this.currentPageIndex,
     this.onPageSelected,
-    this.rowsContainerHeight,
-    this.rowsContainerBottom,
-    this.rowHeight,
+    this.style = const VitTableStyle(),
   });
 
   final List<VitTableColumn> columns;
   final List<row.TableRowModel> rows;
-  final double? rowsContainerHeight;
-  final double? rowHeight;
-  final Widget? rowsContainerBottom;
   final int? pageCount, currentPageIndex;
   final void Function(int pageIndex)? onPageSelected;
+  final VitTableStyle style;
 
   bool get hasPaginator {
     return currentPageIndex != null &&
@@ -37,15 +33,19 @@ class VitTable extends StatelessWidget {
         onPageSelected != null;
   }
 
+  bool get hasInfiniteHeight {
+    return style.height == null;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!hasPaginator) {
-      return _table();
+      return _tableContainer();
     }
     return Column(
       children: [
         Expanded(
-          child: _table(),
+          child: _tableContainer(),
         ),
         const SizedBox(height: 5),
         PageNavigator(
@@ -57,7 +57,7 @@ class VitTable extends StatelessWidget {
     );
   }
 
-  Widget _table() {
+  Widget _tableContainer() {
     return LayoutBuilder(
       builder: (context, constraints) {
         var totalWidth = constraints.maxWidth;
@@ -72,7 +72,7 @@ class VitTable extends StatelessWidget {
         while (currentColumns.isNotEmpty) {
           // Checking if the existing width is enough to display the current list of columns
           double requiredWidth =
-              currentColumns.fold(0.0, (p, x) => p + x.width);
+              currentColumns.fold(0.0, (p, x) => p + x.width) + 5;
           if (totalWidth >= requiredWidth) {
             break;
           }
@@ -93,45 +93,59 @@ class VitTable extends StatelessWidget {
           currentColumns.remove(leastPriorityColumn);
         }
 
-        return DecoratedBox(
+        return Container(
           decoration: BoxDecoration(
             border: Border.all(
               color: gray3,
             ),
-            color: white,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Column(
-            children: [
-              VitTableHeaders(
-                columns: currentColumns,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                color: white,
               ),
-              if (constraints.hasBoundedHeight)
-                AdaptativeVExpanded(
-                  height: rowsContainerHeight,
-                  child: _rows(
-                    invalidColumns: invalidColumns,
-                    currentColumns: currentColumns,
-                    isInfiniteHeight: false,
-                  ),
-                )
-              else
-                _rows(
-                  invalidColumns: invalidColumns,
-                  currentColumns: currentColumns,
-                  isInfiniteHeight: true,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: style.minHeight ?? style.height ?? 0,
+                  maxHeight: style.height ?? double.infinity,
                 ),
-            ],
+                child: _table(currentColumns, constraints, invalidColumns),
+              ),
+            ),
           ),
         );
       },
     );
   }
 
+  Column _table(
+    List<VitTableColumn> currentColumns,
+    BoxConstraints constraints,
+    List<int> invalidColumns,
+  ) {
+    var rows = _rows(
+      invalidColumns: invalidColumns,
+      currentColumns: currentColumns,
+    );
+    return Column(
+      children: [
+        VitTableHeaders(
+          columns: currentColumns,
+          style: style,
+        ),
+        switch (hasInfiniteHeight) {
+          true => rows,
+          false => Expanded(child: rows),
+        },
+      ],
+    );
+  }
+
   Widget _rows({
     required List<int> invalidColumns,
     required List<VitTableColumn> currentColumns,
-    required bool isInfiniteHeight,
   }) {
     Widget rowFromIndex(int index) {
       var row = rows.elementAt(index);
@@ -145,7 +159,7 @@ class VitTable extends StatelessWidget {
         rowIndex: index,
         validCells: validCells,
         validColumns: currentColumns,
-        height: rowHeight,
+        style: style,
       );
     }
 
@@ -158,22 +172,26 @@ class VitTable extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!isInfiniteHeight)
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => rowFromIndex(index),
-              itemCount: rows.length,
-            ),
-          )
-        else
+        if (hasInfiniteHeight)
           Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(rows.length, (index) {
               return rowFromIndex(index);
             }),
+          )
+        else
+          Expanded(
+            child: _scrollableRows(rowFromIndex),
           ),
-        if (rowsContainerBottom != null) rowsContainerBottom!,
+        if (style.innerBottom != null) style.innerBottom!,
       ],
+    );
+  }
+
+  ListView _scrollableRows(Widget Function(int index) rowFromIndex) {
+    return ListView.builder(
+      itemBuilder: (context, index) => rowFromIndex(index),
+      itemCount: rows.length,
     );
   }
 }

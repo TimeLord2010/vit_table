@@ -3,6 +3,7 @@ import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/ui/components/atoms/mouse_hover_listener.dart';
 import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
 import 'package:vit_table/ui/protocols/is_mobile.dart';
+import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 class VitTableRow extends StatelessWidget {
   const VitTableRow({
@@ -10,13 +11,13 @@ class VitTableRow extends StatelessWidget {
     required this.rowIndex,
     required this.validColumns,
     required this.validCells,
-    this.height,
+    required this.style,
   });
 
   final int rowIndex;
   final List<VitTableColumn> validColumns;
   final List<Widget> validCells;
-  final double? height;
+  final VitTableStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +34,10 @@ class VitTableRow extends StatelessWidget {
     return MouseHoverListener(
       builder: (isMouseOver, child) {
         return Container(
-          margin: const EdgeInsets.fromLTRB(1, 0, 1, 1),
           decoration: BoxDecoration(
             color: getBackgroundColor(isMouseOver),
           ),
-          height: height ?? 40,
+          height: style.rowHeight ?? 40,
           child: child,
         );
       },
