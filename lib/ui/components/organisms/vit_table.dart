@@ -141,7 +141,11 @@ class VitTable extends StatelessWidget {
       var value = maxWidth - rowsWidth;
       if (value > 0) {
         // We also need to subtract the border width of both sides.
-        width = value - 2;
+        if (value >= 2) {
+          width = value - 2;
+        } else {
+          width = value;
+        }
       }
     }
 
