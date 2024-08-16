@@ -1,3 +1,7 @@
+## 1.0.1
+
+* FIX: imports in the default import (vit_table.dart).
+
 ## 1.0.0
 
 * Added horizontal scroll.
