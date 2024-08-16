@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/data/models/vit_table_row.dart';
@@ -29,13 +31,16 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'VitTable demo',
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: PointerDeviceKind.values.toSet(),
+      ),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: Scaffold(
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -46,6 +51,10 @@ class _MyAppState extends State<MyApp> {
               const Text('Complex table example:'),
               const SizedBox(height: 5),
               _complexTable(),
+              const SizedBox(height: 30),
+              const Text('Large table'),
+              const SizedBox(height: 5),
+              _largeTable(),
             ],
           ),
         ),
@@ -93,6 +102,45 @@ class _MyAppState extends State<MyApp> {
               const Icon(Icons.edit),
             ],
           )
+      ],
+    );
+  }
+
+  Widget _largeTable() {
+    return VitTable(
+      enableHorizontalScroll: true,
+      columns: [
+        VitTableColumn(title: 'Nº', width: 60),
+        VitTableColumn(title: 'Id', width: 350),
+        VitTableColumn(
+          title: 'Name',
+          expandable: true,
+        ),
+        VitTableColumn(title: 'Email'),
+        VitTableColumn(title: 'Date', width: 100),
+        VitTableColumn(title: 'Actions', width: 100),
+      ],
+      rows: const [
+        VitTableRow(
+          cells: [
+            Text('1'),
+            Text('e90624df-5d34-5a72-b16f-916a442e8810'),
+            Text('Dale Logan'),
+            Text('zojpi@huw.ve'),
+            Text('10/3/2116'),
+            Icon(Icons.edit),
+          ],
+        ),
+        VitTableRow(
+          cells: [
+            Text('2'),
+            Text('7857197a-c9ac-590e-b443-76832759a260'),
+            Text('Gavin Nguyen'),
+            Text('vapu@ruico.tg'),
+            Text('5/3/2024'),
+            Icon(Icons.edit),
+          ],
+        ),
       ],
     );
   }

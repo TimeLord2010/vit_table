@@ -11,11 +11,15 @@ class VitTableCell extends StatelessWidget {
     required this.column,
     required this.child,
     this.padding,
+    this.allowExpand = true,
   });
 
   final VitTableColumn column;
   final Widget child;
   final EdgeInsets? padding;
+
+  /// Indicates if the cell is allowed to expand horizontally.
+  final bool allowExpand;
 
   Widget get content {
     return Padding(
@@ -27,7 +31,7 @@ class VitTableCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = column.width;
-    if (!column.expandable) {
+    if (!allowExpand || !column.expandable) {
       return SizedBox(
         width: width,
         child: content,

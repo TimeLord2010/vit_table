@@ -10,6 +10,7 @@ width.
 - Have a fixed height, or grow vertically according to its contents.
 - Accept a sort function on each column.
 - Display widget when table is empty.
+- Horizontal scroll.
 
 ## Table height
 
@@ -49,13 +50,13 @@ VitTableColumn(
 ),
 ```
 
-This make a column have at least the set width (200 pixels in this case), but if provided with extra horizontal space, the columns with `expandable: true` will expand.
+This make a column have at least the set width (200 pixels in this case), but if provided with extra horizontal space, the columns with `expandable: true` will expand. However, if `enableHorizontalScroll` if set to true, then `expandable` will have no effect.
 
 ## Priority
 
-Priority system makes columns with the greater priority to disapear when there is not enough space. 
+Priority system makes columns with the greater priority to disapear when there is not enough space.
 
-This is system works great in environments where the user can resize the window where the flutter app is located, but not so great for mobile users. 
+This is system works great in environments where the user can resize the window where the flutter app is located, but not so great for mobile users.
 
 For example:
 
@@ -67,9 +68,9 @@ columns: [
 ],
 ```
 
-Here, all the column will be visible if the table width has at least 310 pixels of space. If the available width is 280 pixels, then the column "Gender" will not be visible.
+Here, all the column will be visible if the table width has at least 310 pixels of space. If the available width is 280 pixels, then the column "Gender" will not be visible. If the available width is 100 pixels, then the only table shown is "Code".
 
-If the available width is 100 pixels, then the only table shown is "Code". 
+If `enableHorizontalScroll` if set to true, then `priority` will have no effect since columns will never vanish.
 
 # Roadmap
 
@@ -77,7 +78,6 @@ If the available width is 100 pixels, then the only table shown is "Code".
   - Accept any widget to display in the header;
   - Change the text style of the header.
   - Change the background color.
-- Horizontal scroll;
 - Custom rows background color;
 - Custom rows background widget;
 - Custom table border color and radius;
