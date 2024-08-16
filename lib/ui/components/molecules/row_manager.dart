@@ -16,12 +16,19 @@ class RowManager extends StatelessWidget {
     required this.validColumns,
     required this.validCells,
     required this.style,
+    this.allowExpand = true,
+    this.rightSpace,
   });
 
   final int rowIndex;
   final List<VitTableColumn> validColumns;
   final List<Widget> validCells;
   final VitTableStyle style;
+
+  /// Indicates if cells can expand horizontally.
+  final bool allowExpand;
+
+  final double? rightSpace;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +71,12 @@ class RowManager extends StatelessWidget {
     for (int i = 0; i < cells.length; i++) {
       items.add(VitTableCell(
         column: columns[i],
+        allowExpand: allowExpand,
         child: cells[i],
       ));
+    }
+    if (rightSpace != null) {
+      items.add(SizedBox(width: rightSpace));
     }
     return items;
   }

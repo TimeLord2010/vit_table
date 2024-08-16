@@ -20,6 +20,7 @@ class VitTable extends StatelessWidget {
     this.onPageSelected,
     this.style = const VitTableStyle(),
     this.sortColumnIndex,
+    this.enableHorizontalScroll = false,
     this.isAscSort = true,
   });
 
@@ -28,6 +29,7 @@ class VitTable extends StatelessWidget {
   final int? pageCount, currentPageIndex;
   final void Function(int pageIndex)? onPageSelected;
   final VitTableStyle style;
+  final bool enableHorizontalScroll;
   final int? sortColumnIndex;
   final bool isAscSort;
 
@@ -74,7 +76,7 @@ class VitTable extends StatelessWidget {
 
         var currentColumns = [...columns];
 
-        while (currentColumns.isNotEmpty) {
+        while (currentColumns.isNotEmpty && !enableHorizontalScroll) {
           // Checking if the existing width is enough to display the current list of columns
           double requiredWidth =
               currentColumns.fold(0.0, (p, x) => p + x.width) + 5;
@@ -116,7 +118,11 @@ class VitTable extends StatelessWidget {
                 minHeight: style.minHeight ?? style.height ?? 0,
                 maxHeight: style.height ?? double.infinity,
               ),
-              child: _table(currentColumns, invalidColumns),
+              child: _table(
+                currentColumns: currentColumns,
+                invalidColumns: invalidColumns,
+                maxWidth: constraints.maxWidth,
+              ),
             ),
           ),
         );
@@ -124,18 +130,36 @@ class VitTable extends StatelessWidget {
     );
   }
 
-  Column _table(List<VitTableColumn> currentColumns, List<int> invalidColumns) {
-    var rows = _rows(
+  Widget _table({
+    required List<VitTableColumn> currentColumns,
+    required List<int> invalidColumns,
+    required double maxWidth,
+  }) {
+    double? width;
+    if (enableHorizontalScroll) {
+      var rowsWidth = currentColumns.fold(0.0, (p, x) => p + x.width);
+      var value = maxWidth - rowsWidth;
+      if (value > 0) {
+        // We also need to subtract the border width of both sides.
+        width = value - 2;
+      }
+    }
+
+    Widget rows = _rows(
       invalidColumns: invalidColumns,
       currentColumns: currentColumns,
+      rightSpace: width,
     );
-    return Column(
+
+    var column = Column(
       children: [
         VitTableHeaders(
           columns: currentColumns,
           style: style,
           sortingColumnIndex: sortColumnIndex,
           isAscSort: isAscSort,
+          rightSpace: width,
+          allowExpand: !enableHorizontalScroll,
         ),
         switch (hasInfiniteHeight) {
           true => rows,
@@ -143,11 +167,22 @@ class VitTable extends StatelessWidget {
         },
       ],
     );
+
+    if (enableHorizontalScroll) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const ClampingScrollPhysics(),
+        child: column,
+      );
+    }
+
+    return column;
   }
 
   Widget _rows({
     required List<int> invalidColumns,
     required List<VitTableColumn> currentColumns,
+    double? rightSpace,
   }) {
     Widget rowFromIndex(int index) {
       var row = rows.elementAt(index);
@@ -162,6 +197,8 @@ class VitTable extends StatelessWidget {
         validCells: validCells,
         validColumns: currentColumns,
         style: style,
+        allowExpand: !enableHorizontalScroll,
+        rightSpace: rightSpace,
       );
     }
 

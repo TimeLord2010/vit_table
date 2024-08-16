@@ -15,12 +15,18 @@ class VitTableHeaders extends StatelessWidget {
     required this.style,
     this.sortingColumnIndex,
     this.isAscSort = true,
+    this.rightSpace,
+    this.allowExpand = true,
   });
 
   final List<VitTableColumn> columns;
   final VitTableStyle style;
   final int? sortingColumnIndex;
   final bool isAscSort;
+  final double? rightSpace;
+
+  /// Indicates that headers can expand.
+  final bool allowExpand;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +42,7 @@ class VitTableHeaders extends StatelessWidget {
       child: Row(
         children: [
           for (int i = 0; i < columns.length; i++) _buildColumn(i, columns[i]),
+          if (rightSpace != null) SizedBox(width: rightSpace)
         ],
       ),
     );
@@ -45,6 +52,7 @@ class VitTableHeaders extends StatelessWidget {
     var isCurrentIndex = index == sortingColumnIndex;
     return VitTableCell(
       column: column,
+      allowExpand: allowExpand,
       child: Row(
         children: [
           if (column.onSort != null)

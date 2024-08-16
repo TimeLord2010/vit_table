@@ -9,8 +9,20 @@ class VitTableColumn {
   /// width.
   final double width;
 
+  /// Indicates that the column can be expanded if there are extra horizontal
+  /// space.
+  ///
+  /// Has no effect if VitTable.enableHorizontalScroll is set to true.
   final bool expandable;
+
   final EdgeInsets cellsPadding;
+
+  /// Used to hide columns.
+  ///
+  /// If there is not enough space, the column with the greatest priority
+  /// will vanish first.
+  ///
+  /// Has no effect if VitTable.enableHorizontalScroll is set to true.
   final int priority;
 
   final void Function(bool asc)? onSort;
