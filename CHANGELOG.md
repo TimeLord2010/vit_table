@@ -1,3 +1,9 @@
+## 1.0.3
+
+* FIX: handled the case where the available horizontal space is exactly 1
+pixel greather than the required amount to display all columns. In this case,
+the widget would crash.
+
 ## 1.0.2
 
 * FIX: exports VitTable directly in `vit_table.dart`.
