@@ -39,10 +39,6 @@ class VitTable extends StatelessWidget {
         onPageSelected != null;
   }
 
-  bool get hasInfiniteHeight {
-    return style.height == null;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!hasPaginator) {
@@ -116,7 +112,7 @@ class VitTable extends StatelessWidget {
               color: white,
               constraints: BoxConstraints(
                 minHeight: style.minHeight ?? style.height ?? 0,
-                maxHeight: style.height ?? double.infinity,
+                maxHeight: style.height ?? constraints.maxHeight,
               ),
               child: _table(
                 currentColumns: currentColumns,
@@ -149,27 +145,30 @@ class VitTable extends StatelessWidget {
       }
     }
 
-    Widget rows = _rows(
-      invalidColumns: invalidColumns,
-      currentColumns: currentColumns,
-      rightSpace: width,
-    );
-
-    var column = Column(
-      children: [
-        VitTableHeaders(
-          columns: currentColumns,
-          style: style,
-          sortingColumnIndex: sortColumnIndex,
-          isAscSort: isAscSort,
+    var column = LayoutBuilder(
+      builder: (context, constraints) {
+        Widget rows = _rows(
+          invalidColumns: invalidColumns,
+          currentColumns: currentColumns,
           rightSpace: width,
-          allowExpand: !enableHorizontalScroll,
-        ),
-        switch (hasInfiniteHeight) {
-          true => rows,
-          false => Expanded(child: rows),
-        },
-      ],
+        );
+        return Column(
+          children: [
+            VitTableHeaders(
+              columns: currentColumns,
+              style: style,
+              sortingColumnIndex: sortColumnIndex,
+              isAscSort: isAscSort,
+              rightSpace: width,
+              allowExpand: !enableHorizontalScroll,
+            ),
+            switch (constraints.maxHeight.isInfinite) {
+              true => rows,
+              false => Expanded(child: rows),
+            },
+          ],
+        );
+      },
     );
 
     if (enableHorizontalScroll) {
@@ -215,25 +214,28 @@ class VitTable extends StatelessWidget {
       );
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (hasInfiniteHeight)
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(rows.length, (index) {
-              return rowFromIndex(index);
-            }),
-          )
-        else
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => rowFromIndex(index),
-              itemCount: rows.length,
-            ),
-          ),
-        if (style.innerBottom != null) style.innerBottom!,
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            if (constraints.maxHeight.isInfinite)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(rows.length, (index) {
+                  return rowFromIndex(index);
+                }),
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: (context, index) => rowFromIndex(index),
+                  itemCount: rows.length,
+                ),
+              ),
+            if (style.innerBottom != null) style.innerBottom!,
+          ],
+        );
+      },
     );
   }
 }

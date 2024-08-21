@@ -1,3 +1,8 @@
+## 1.0.4
+
+* FIX: table now behaves correctly when used in container with non infinite
+height.
+
 ## 1.0.3
 
 * FIX: handled the case where the available horizontal space is exactly 1
