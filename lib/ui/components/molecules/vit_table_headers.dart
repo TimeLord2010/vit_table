@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vit_table/data/constraints.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/ui/components/atoms/vit_button.dart';
 import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
@@ -31,7 +32,7 @@ class VitTableHeaders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: style.headerHeight,
+      height: style.headerHeight ?? kDefaultHeaderHeight,
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(

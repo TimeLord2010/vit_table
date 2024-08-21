@@ -39,24 +39,51 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       home: Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Simple table example:'),
-              const SizedBox(height: 5),
-              _simpleTable(),
-              const SizedBox(height: 30),
-              const Text('Complex table example:'),
-              const SizedBox(height: 5),
-              _complexTable(),
-              const SizedBox(height: 30),
-              const Text('Large table'),
-              const SizedBox(height: 5),
-              _largeTable(),
-            ],
-          ),
+        body: PageView(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Simple table example:'),
+                  const SizedBox(height: 5),
+                  _simpleTable(),
+                  const SizedBox(height: 30),
+                  const Text('Complex table example:'),
+                  const SizedBox(height: 5),
+                  _complexTable(),
+                  const SizedBox(height: 30),
+                  const Text('Large table'),
+                  const SizedBox(height: 5),
+                  _largeTable(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const Text('A table with multiple rows'),
+                  const SizedBox(height: 5),
+                  Expanded(
+                    child: VitTable(
+                      columns: [
+                        VitTableColumn(title: 'Index'),
+                      ],
+                      rows: List.generate(100, (index) {
+                        return VitTableRow(
+                          cells: [
+                            Text(index.toString()),
+                          ],
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
