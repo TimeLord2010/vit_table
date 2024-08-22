@@ -1,3 +1,7 @@
+## 1.0.6
+
+* FIX: horizontal scroll on thin spaces.
+
 ## 1.0.5
 
 * FIX: table crashing when the widget is inside a container with finite height

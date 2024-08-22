@@ -43,7 +43,7 @@ class VitTableHeaders extends StatelessWidget {
       child: Row(
         children: [
           for (int i = 0; i < columns.length; i++) _buildColumn(i, columns[i]),
-          if (rightSpace != null) SizedBox(width: rightSpace)
+          if (rightSpace != null) SizedBox(width: rightSpace!)
         ],
       ),
     );

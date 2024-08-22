@@ -72,7 +72,8 @@ class _MyAppState extends State<MyApp> {
                       enableHorizontalScroll: true,
                       columns: [
                         VitTableColumn(title: 'Index'),
-                        VitTableColumn(title: 'Name', expandable: true),
+                        VitTableColumn(title: 'Enabled', expandable: true),
+                        VitTableColumn(title: 'Number')
                       ],
                       rows: List.generate(150, (index) {
                         var random = Random();
@@ -80,6 +81,7 @@ class _MyAppState extends State<MyApp> {
                           cells: [
                             Text(index.toString()),
                             Text(random.nextBool().toString()),
+                            Text(random.nextInt(1000).toString()),
                           ],
                         );
                       }),
