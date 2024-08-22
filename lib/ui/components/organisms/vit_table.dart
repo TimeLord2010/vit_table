@@ -116,7 +116,9 @@ class VitTable extends StatelessWidget {
               child: _table(
                 currentColumns: currentColumns,
                 invalidColumns: invalidColumns,
-                maxWidth: constraints.maxWidth,
+
+                // Subtracting the border sides from the available width.
+                maxWidth: constraints.maxWidth - 2,
               ),
             ),
           ),
@@ -135,7 +137,7 @@ class VitTable extends StatelessWidget {
     // the table is bigger than the columns width.
     double? rightSpace;
     if (enableHorizontalScroll) {
-      var rowsWidth = currentColumns.fold(0.0, (p, x) => p + x.width);
+      var rowsWidth = getRequiredWidth(currentColumns);
       var value = maxWidth - rowsWidth;
       if (value > 0) {
         // We also need to subtract the border width of both sides.
@@ -147,49 +149,52 @@ class VitTable extends StatelessWidget {
       }
     }
 
-    var column = LayoutBuilder(
-      builder: (context, constraints) {
-        Widget rows = RowsManager(
-          invalidColumns: invalidColumns,
-          currentColumns: currentColumns,
-          allowExpand: !enableHorizontalScroll,
-          columns: columns,
-          rows: this.rows,
-          style: style,
-          width: maxWidth,
-          rightSpace: rightSpace,
-        );
-        return Column(
-          children: [
-            VitTableHeaders(
-              columns: currentColumns,
-              style: style,
-              sortingColumnIndex: sortColumnIndex,
-              isAscSort: isAscSort,
-              rightSpace: rightSpace,
-              allowExpand: !enableHorizontalScroll,
-            ),
-            switch (constraints.maxHeight.isInfinite) {
-              true => rows,
-              false => Expanded(child: rows),
-            },
-          ],
-        );
-      },
-    );
+    var requiredWidth = getRequiredWidth(currentColumns);
+
+    Widget column(bool hasHorizontalScroll) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          Widget rows = RowsManager(
+            invalidColumns: invalidColumns,
+            currentColumns: currentColumns,
+            allowExpand: !hasHorizontalScroll,
+            columns: columns,
+            rows: this.rows,
+            style: style,
+            width: maxWidth < requiredWidth ? requiredWidth : maxWidth,
+            rightSpace: rightSpace,
+          );
+          return Column(
+            children: [
+              VitTableHeaders(
+                columns: currentColumns,
+                style: style,
+                sortingColumnIndex: sortColumnIndex,
+                isAscSort: isAscSort,
+                rightSpace: rightSpace,
+                allowExpand: !hasHorizontalScroll,
+              ),
+              switch (constraints.maxHeight.isInfinite) {
+                true => rows,
+                false => Expanded(child: rows),
+              },
+            ],
+          );
+        },
+      );
+    }
 
     if (enableHorizontalScroll) {
-      var requiredWidth = getRequiredWidth(columns);
       var needsSpace = requiredWidth > maxWidth;
       if (needsSpace) {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          child: column,
+          child: column(true),
         );
       }
     }
 
-    return column;
+    return column(false);
   }
 }
