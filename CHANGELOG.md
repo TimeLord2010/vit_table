@@ -1,3 +1,8 @@
+## 1.0.5
+
+* FIX: table crashing when the widget is inside a container with finite height
+and `enableHorizontalScroll` is set to true.
+
 ## 1.0.4
 
 * FIX: table now behaves correctly when used in container with non infinite

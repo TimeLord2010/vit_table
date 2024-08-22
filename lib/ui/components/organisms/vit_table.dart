@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vit_dart_extensions/vit_dart_extensions.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
-import 'package:vit_table/ui/components/molecules/row_manager.dart';
+import 'package:vit_table/ui/components/molecules/rows_manager.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_headers.dart';
 import 'package:vit_table/ui/components/organisms/page_navigator.dart';
+import 'package:vit_table/ui/protocols/column/get_required_width.dart';
 import 'package:vit_table/ui/theme/colors.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
@@ -74,8 +74,7 @@ class VitTable extends StatelessWidget {
 
         while (currentColumns.isNotEmpty && !enableHorizontalScroll) {
           // Checking if the existing width is enough to display the current list of columns
-          double requiredWidth =
-              currentColumns.fold(0.0, (p, x) => p + x.width) + 5;
+          double requiredWidth = getRequiredWidth(currentColumns);
           if (totalWidth >= requiredWidth) {
             break;
           }
@@ -131,26 +130,34 @@ class VitTable extends StatelessWidget {
     required List<int> invalidColumns,
     required double maxWidth,
   }) {
-    double? width;
+    // Setting the right space to compensate for extras space on the right
+    // side of the table in case [enableHorizontalScroll] is set to true and
+    // the table is bigger than the columns width.
+    double? rightSpace;
     if (enableHorizontalScroll) {
       var rowsWidth = currentColumns.fold(0.0, (p, x) => p + x.width);
       var value = maxWidth - rowsWidth;
       if (value > 0) {
         // We also need to subtract the border width of both sides.
         if (value >= 2) {
-          width = value - 2;
+          rightSpace = value - 2;
         } else {
-          width = value;
+          rightSpace = value;
         }
       }
     }
 
     var column = LayoutBuilder(
       builder: (context, constraints) {
-        Widget rows = _rows(
+        Widget rows = RowsManager(
           invalidColumns: invalidColumns,
           currentColumns: currentColumns,
-          rightSpace: width,
+          allowExpand: !enableHorizontalScroll,
+          columns: columns,
+          rows: this.rows,
+          style: style,
+          width: maxWidth,
+          rightSpace: rightSpace,
         );
         return Column(
           children: [
@@ -159,7 +166,7 @@ class VitTable extends StatelessWidget {
               style: style,
               sortingColumnIndex: sortColumnIndex,
               isAscSort: isAscSort,
-              rightSpace: width,
+              rightSpace: rightSpace,
               allowExpand: !enableHorizontalScroll,
             ),
             switch (constraints.maxHeight.isInfinite) {
@@ -172,70 +179,17 @@ class VitTable extends StatelessWidget {
     );
 
     if (enableHorizontalScroll) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const ClampingScrollPhysics(),
-        child: column,
-      );
+      var requiredWidth = getRequiredWidth(columns);
+      var needsSpace = requiredWidth > maxWidth;
+      if (needsSpace) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: column,
+        );
+      }
     }
 
     return column;
-  }
-
-  Widget _rows({
-    required List<int> invalidColumns,
-    required List<VitTableColumn> currentColumns,
-    double? rightSpace,
-  }) {
-    Widget rowFromIndex(int index) {
-      var row = rows.elementAt(index);
-      var cells = row.cells;
-      assert(
-        cells.length == columns.length,
-        'Number of cells must be equal to the number of columns',
-      );
-      var validCells = cells.removeIndices(invalidColumns.toSet());
-      return RowManager(
-        rowIndex: index,
-        validCells: validCells,
-        validColumns: currentColumns,
-        style: style,
-        allowExpand: !enableHorizontalScroll,
-        rightSpace: rightSpace,
-      );
-    }
-
-    if (rows.isEmpty) {
-      if (style.onEmptyWidget != null) {
-        return style.onEmptyWidget!;
-      }
-      return const SizedBox(
-        height: 150,
-      );
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Column(
-          children: [
-            if (constraints.maxHeight.isInfinite)
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(rows.length, (index) {
-                  return rowFromIndex(index);
-                }),
-              )
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) => rowFromIndex(index),
-                  itemCount: rows.length,
-                ),
-              ),
-            if (style.innerBottom != null) style.innerBottom!,
-          ],
-        );
-      },
-    );
   }
 }

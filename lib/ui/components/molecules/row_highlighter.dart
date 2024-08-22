@@ -8,9 +8,9 @@ import 'package:vit_table/ui/theme/vit_table_style.dart';
 /// Builds the row on a VitTable.
 ///
 /// This widget hightlights the entire row when the mouse is over it.
-class RowManager extends StatelessWidget {
+class RowHighlighter extends StatelessWidget {
   /// MEANT FOR INTERNAL USE ONLY.
-  const RowManager({
+  const RowHighlighter({
     super.key,
     required this.rowIndex,
     required this.validColumns,
