@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -68,13 +69,17 @@ class _MyAppState extends State<MyApp> {
                   const SizedBox(height: 5),
                   Expanded(
                     child: VitTable(
+                      enableHorizontalScroll: true,
                       columns: [
                         VitTableColumn(title: 'Index'),
+                        VitTableColumn(title: 'Name', expandable: true),
                       ],
-                      rows: List.generate(100, (index) {
+                      rows: List.generate(150, (index) {
+                        var random = Random();
                         return VitTableRow(
                           cells: [
                             Text(index.toString()),
+                            Text(random.nextBool().toString()),
                           ],
                         );
                       }),
