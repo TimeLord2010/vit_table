@@ -1,3 +1,7 @@
+## 1.1.0
+
+* FEAT: `VitTableTheme` for easy passing of theme across the widget tree.
+
 ## 1.0.6
 
 * FIX: horizontal scroll on thin spaces.

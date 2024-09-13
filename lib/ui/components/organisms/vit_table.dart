@@ -7,6 +7,7 @@ import 'package:vit_table/ui/components/organisms/page_navigator.dart';
 import 'package:vit_table/ui/protocols/column/get_required_width.dart';
 import 'package:vit_table/ui/theme/colors.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
+import 'package:vit_table/ui/theme/vit_table_theme.dart';
 
 import '../../../data/models/vit_table_row.dart' as row;
 
@@ -18,7 +19,7 @@ class VitTable extends StatelessWidget {
     this.pageCount,
     this.currentPageIndex,
     this.onPageSelected,
-    this.style = const VitTableStyle(),
+    this.style,
     this.sortColumnIndex,
     this.enableHorizontalScroll = false,
     this.isAscSort = true,
@@ -28,7 +29,7 @@ class VitTable extends StatelessWidget {
   final List<row.VitTableRow> rows;
   final int? pageCount, currentPageIndex;
   final void Function(int pageIndex)? onPageSelected;
-  final VitTableStyle style;
+  final VitTableStyle? style;
   final bool enableHorizontalScroll;
   final int? sortColumnIndex;
   final bool isAscSort;
@@ -39,19 +40,27 @@ class VitTable extends StatelessWidget {
         onPageSelected != null;
   }
 
+  VitTableStyle _getStyle(BuildContext context) {
+    if (style != null) {
+      return style!;
+    }
+    var s = VitTableTheme.maybeOf(context);
+    return s ?? const VitTableStyle();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!hasPaginator) {
-      return _tableContainer();
+      return _tableContainer(context);
     }
     return Column(
       children: [
         Expanded(
-          child: _tableContainer(),
+          child: _tableContainer(context),
         ),
         const SizedBox(height: 5),
         PageNavigator(
-          style: style,
+          style: _getStyle(context),
           currentPageIndex: currentPageIndex!,
           pagesCount: pageCount!,
           onPageSelected: onPageSelected!,
@@ -60,7 +69,8 @@ class VitTable extends StatelessWidget {
     );
   }
 
-  Widget _tableContainer() {
+  Widget _tableContainer(BuildContext context) {
+    var style = _getStyle(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         var totalWidth = constraints.maxWidth;
@@ -114,6 +124,7 @@ class VitTable extends StatelessWidget {
                 maxHeight: style.height ?? constraints.maxHeight,
               ),
               child: _table(
+                context: context,
                 currentColumns: currentColumns,
                 invalidColumns: invalidColumns,
 
@@ -128,6 +139,7 @@ class VitTable extends StatelessWidget {
   }
 
   Widget _table({
+    required BuildContext context,
     required List<VitTableColumn> currentColumns,
     required List<int> invalidColumns,
     required double maxWidth,
@@ -151,7 +163,8 @@ class VitTable extends StatelessWidget {
 
     var requiredWidth = getRequiredWidth(currentColumns);
 
-    Widget column(bool hasHorizontalScroll) {
+    Widget column(BuildContext context, bool hasHorizontalScroll) {
+      var style = _getStyle(context);
       return LayoutBuilder(
         builder: (context, constraints) {
           Widget rows = RowsManager(
@@ -190,11 +203,11 @@ class VitTable extends StatelessWidget {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          child: column(true),
+          child: column(context, true),
         );
       }
     }
 
-    return column(false);
+    return column(context, false);
   }
 }
