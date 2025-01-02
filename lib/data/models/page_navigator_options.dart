@@ -1,7 +1,7 @@
 class PageNavigatorOptions {
   const PageNavigatorOptions({
     this.jumpPageOffset = 9,
-    this.showEdgePages = false,
+    this.showEdgePages = true,
     this.showJumpPage = true,
   });
 

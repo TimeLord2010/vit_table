@@ -28,22 +28,29 @@ class PageNavigatorButtom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VitButton(
-      onPressed: onSelected,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: backgroundColor,
-        ),
+    return SizedBox(
+      height: style?.itemSize ?? 40,
+      width: style?.itemSize ?? 40,
+      child: Padding(
         padding: const EdgeInsets.all(5),
-        child: Center(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              (pageIndex + 1).toString(),
-              style: TextStyle(
-                color: isSelected ? white : black,
+        child: VitButton(
+          onPressed: onSelected,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: backgroundColor,
+            ),
+            padding: const EdgeInsets.all(5),
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  (pageIndex + 1).toString(),
+                  style: TextStyle(
+                    color: isSelected ? white : black,
+                  ),
+                ),
               ),
             ),
           ),

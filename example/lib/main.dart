@@ -2,6 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:vit_table/data/models/page_navigator_options.dart';
+import 'package:vit_table/data/models/page_navigator_theme.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/data/models/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/vit_table.dart';
@@ -27,6 +29,9 @@ class _MyAppState extends State<MyApp> {
 
   bool isAscSort = true;
   int? sortColumnIndex;
+
+  bool enablePageNavigator = false;
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -57,42 +62,79 @@ class _MyAppState extends State<MyApp> {
                   const SizedBox(height: 30),
                   const Text('Large table'),
                   const SizedBox(height: 5),
-                  _largeTable(),
+                  _wideTable(),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const Text('A table with multiple rows'),
-                  const SizedBox(height: 5),
-                  Expanded(
-                    child: VitTable(
-                      enableHorizontalScroll: true,
-                      columns: [
-                        VitTableColumn(title: 'Index'),
-                        VitTableColumn(title: 'Enabled', expandable: true),
-                        VitTableColumn(title: 'Number')
-                      ],
-                      rows: List.generate(150, (index) {
-                        var random = Random();
-                        return VitTableRow(
-                          cells: [
-                            Text(index.toString()),
-                            Text(random.nextBool().toString()),
-                            Text(random.nextInt(1000).toString()),
-                          ],
-                        );
-                      }),
-                    ),
-                  ),
-                ],
-              ),
+              child: _largeTable(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Column _largeTable() {
+    var totalRows = 300;
+    var desiredPages = 15;
+    var pageSize = totalRows ~/ desiredPages;
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Text('A table with multiple rows'),
+            const Spacer(),
+            Switch.adaptive(
+              value: enablePageNavigator,
+              onChanged: (value) {
+                setState(() {
+                  enablePageNavigator = value;
+                });
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Expanded(
+          child: VitTable(
+            enableHorizontalScroll: true,
+            columns: [
+              VitTableColumn(title: 'Index'),
+              VitTableColumn(title: 'Enabled', expandable: true),
+              VitTableColumn(title: 'Number')
+            ],
+            rows: List.generate(pageSize, (index) {
+              var random = Random();
+              var rowId = (currentPage * pageSize) + index + 1;
+              return VitTableRow(
+                cells: [
+                  Text(rowId.toString()),
+                  Text(random.nextBool().toString()),
+                  Text(random.nextInt(1000).toString()),
+                ],
+              );
+            }),
+            style: const VitTableStyle(
+              pageNavigatorThemeData: PageNavigatorThemeData(
+                options: PageNavigatorOptions(
+                  showEdgePages: true,
+                ),
+              ),
+            ),
+            pageCount: desiredPages,
+            currentPageIndex: currentPage,
+            onPageSelected: enablePageNavigator
+                ? (pageIndex) {
+                    setState(() {
+                      currentPage = pageIndex;
+                    });
+                  }
+                : null,
+          ),
+        ),
+      ],
     );
   }
 
@@ -140,7 +182,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _largeTable() {
+  Widget _wideTable() {
     return VitTable(
       enableHorizontalScroll: true,
       columns: [
