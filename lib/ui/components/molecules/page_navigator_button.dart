@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:vit_table/data/models/page_navigator_style.dart';
 import 'package:vit_table/ui/components/atoms/vit_button.dart';
 import 'package:vit_table/ui/theme/colors.dart';
-import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 class PageNavigatorButtom extends StatelessWidget {
   /// MEANT FOR INTERNAL USE ONLY
@@ -16,14 +16,14 @@ class PageNavigatorButtom extends StatelessWidget {
   final int pageIndex;
   final bool isSelected;
   final void Function() onSelected;
-  final VitTableStyle style;
+  final PageNavigatorStyle? style;
 
   Color? get backgroundColor {
     if (isSelected) {
-      var color = style.pageNavigatorSelectedColor;
+      var color = style?.selectedColor;
       return color ?? const Color.fromARGB(255, 85, 137, 255);
     }
-    return style.pageNavigatorColor ?? white;
+    return style?.color ?? white;
   }
 
   @override
