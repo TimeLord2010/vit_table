@@ -10,12 +10,9 @@ class PageNavigator extends StatelessWidget {
     required this.pagesCount,
     required this.onPageSelected,
     required this.themeData,
-    this.itemSize = 40,
   });
 
   final PageNavigatorThemeData themeData;
-
-  final double itemSize;
 
   /// The current selected page index.
   final int currentPageIndex;
@@ -43,7 +40,7 @@ class PageNavigator extends StatelessWidget {
   }
 
   List<Widget> _getItems() {
-    var items = [
+    List<Widget?> items = [
       _getFirstPage(),
       const SizedBox(width: 10),
       if (showJumpPage) _getPageItem(currentPageIndex - jumpPageOffset),
@@ -59,13 +56,36 @@ class PageNavigator extends StatelessWidget {
       const SizedBox(width: 10),
       _getLastPage(),
     ];
+
+    var buttons = items.whereType<PageNavigatorButtom>().toList();
+
+    if (buttons.length > 1) {
+      var first = buttons.first;
+      var second = buttons[1];
+
+      if (first.pageIndex == second.pageIndex) {
+        items.removeAt(0);
+      }
+    }
+
+    buttons = items.whereType<PageNavigatorButtom>().toList();
+
+    if (buttons.length > 2) {
+      var last = buttons.last;
+      var secondLast = buttons[buttons.length - 2];
+
+      if (last.pageIndex == secondLast.pageIndex) {
+        items.removeLast();
+      }
+    }
+
     return items.whereType<Widget>().toList();
   }
 
   Widget? _getFirstPage() {
     if (!showEdgePages && currentPageIndex <= jumpPageOffset) {
       return SizedBox(
-        width: itemSize,
+        width: themeData.style.itemSize ?? 40,
       );
     }
     return _getPageItem(0);
@@ -74,41 +94,25 @@ class PageNavigator extends StatelessWidget {
   Widget? _getLastPage() {
     if (!showEdgePages && currentPageIndex > (pagesCount - 4)) {
       return SizedBox(
-        width: itemSize,
+        width: themeData.style.itemSize ?? 40,
       );
     }
 
     return _getPageItem(pagesCount - 1);
   }
 
-  Widget _getItem(Widget child) {
-    return SizedBox(
-      height: itemSize,
-      width: itemSize,
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: child,
-      ),
-    );
-  }
-
-  Widget? _getPageItem(int pageIndex) {
-    Widget? render() {
-      if (pageIndex < 0 || pageIndex >= pagesCount) {
-        return null;
-      }
-      return PageNavigatorButtom(
-        style: themeData.style,
-        pageIndex: pageIndex,
-        isSelected: pageIndex == currentPageIndex,
-        onSelected: () => onPageSelected(pageIndex),
+  Widget _getPageItem(int pageIndex) {
+    if (pageIndex < 0 || pageIndex >= pagesCount) {
+      //return const SizedBox.shrink();
+      return SizedBox(
+        width: themeData.style.itemSize ?? 40,
       );
     }
-
-    var render2 = render();
-    if (render2 == null) {
-      return null;
-    }
-    return _getItem(render2);
+    return PageNavigatorButtom(
+      style: themeData.style,
+      pageIndex: pageIndex,
+      isSelected: pageIndex == currentPageIndex,
+      onSelected: () => onPageSelected(pageIndex),
+    );
   }
 }
