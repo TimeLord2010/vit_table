@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:vit_table/data/models/page_navigator_theme.dart';
+
+import 'page_navigator_theme.dart';
 
 class VitTableStyle {
   /// The exact height of the table.

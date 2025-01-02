@@ -1,3 +1,8 @@
+## 2.0.0
+
+* REFAC: Page style properties is defined in the class `PageNavigatorStyle` instead of `VitTableStyle`.
+* FEAT: Implemented "showJumpPage" and "showEdgePages".
+
 ## 1.1.0
 
 * FEAT: `VitTableTheme` for easy passing of theme across the widget tree.
