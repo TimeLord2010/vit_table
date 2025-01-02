@@ -88,7 +88,7 @@ class PageNavigator extends StatelessWidget {
   }
 
   Widget? _getFirstPage() {
-    if (currentPageIndex <= actualJump) {
+    if (!showEdgePages && currentPageIndex <= actualJump) {
       return SizedBox(
         width: itemSize,
       );
@@ -97,7 +97,7 @@ class PageNavigator extends StatelessWidget {
   }
 
   Widget? _getLastPage() {
-    if (currentPageIndex > (pagesCount - 4)) {
+    if (!showEdgePages && currentPageIndex > (pagesCount - 4)) {
       return SizedBox(
         width: itemSize,
       );
