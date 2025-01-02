@@ -40,6 +40,7 @@ class VitTable extends StatelessWidget {
         onPageSelected != null;
   }
 
+  /// Gets the style from the class instance or from the theme in build context.
   VitTableStyle _getStyle(BuildContext context) {
     if (style != null) {
       return style!;
@@ -60,7 +61,7 @@ class VitTable extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         PageNavigator(
-          style: _getStyle(context),
+          themeData: _getStyle(context).pageNavigatorThemeData,
           currentPageIndex: currentPageIndex!,
           pagesCount: pageCount!,
           onPageSelected: onPageSelected!,

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:vit_table/data/models/page_navigator_theme.dart';
 
 class VitTableStyle {
   /// The exact height of the table.
@@ -19,10 +20,7 @@ class VitTableStyle {
   /// Widget to show when the table is empty
   final Widget? onEmptyWidget;
 
-  /// The color used in the selected page button.
-  final Color? pageNavigatorSelectedColor;
-
-  final Color? pageNavigatorColor;
+  final PageNavigatorThemeData pageNavigatorThemeData;
 
   const VitTableStyle({
     this.height,
@@ -31,7 +29,7 @@ class VitTableStyle {
     this.rowHeight,
     this.innerBottom,
     this.onEmptyWidget,
-    this.pageNavigatorColor,
-    this.pageNavigatorSelectedColor,
-  });
+    PageNavigatorThemeData? pageNavigatorThemeData,
+  }) : pageNavigatorThemeData =
+            pageNavigatorThemeData ?? const PageNavigatorThemeData();
 }

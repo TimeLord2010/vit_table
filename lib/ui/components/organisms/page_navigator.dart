@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:vit_table/data/models/page_navigator_theme.dart';
 import 'package:vit_table/ui/components/molecules/page_navigator_button.dart';
-import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 class PageNavigator extends StatelessWidget {
   /// MEANT FOR INTERNAL USE ONLY
@@ -9,14 +9,11 @@ class PageNavigator extends StatelessWidget {
     required this.currentPageIndex,
     required this.pagesCount,
     required this.onPageSelected,
-    required this.style,
+    required this.themeData,
     this.itemSize = 40,
-    this.jumpPageOffset = 9,
-    this.showEdgePages = false,
-    this.showJumpPage = true,
   });
 
-  final VitTableStyle style;
+  final PageNavigatorThemeData themeData;
 
   final double itemSize;
 
@@ -26,35 +23,13 @@ class PageNavigator extends StatelessWidget {
   /// The total number of pages that exist.
   final int pagesCount;
 
-  /// How far the page jump is set. Default is 10.
-  ///
-  /// For more information, see docs on [showPageJump].
-  final int jumpPageOffset;
-
-  /// Indicates if the jump page is shown.
-  ///
-  /// A jump page is a page which is too far to be shown, but it is being deplayed.
-  ///
-  /// For example, if the current page is 1, then 2 and 3 should also be shown.
-  /// But to facilitate the usability, the page 10 is also shown in case the
-  /// user wishes to go far ahead at one. In this example, page 10 is a page
-  /// jump.
-  ///
-  /// By default, the page jump is 10, but this can change using the
-  /// [jumpPageOffset].
-  final bool showJumpPage;
-
-  /// Indicates if the first and last pages are always shown.
-  final bool showEdgePages;
-
   final void Function(int pageIndex) onPageSelected;
 
-  int get actualJump {
-    // if (pagesCount < jumpPageOffset) {
-    //   return pagesCount - 1;
-    // }
-    return jumpPageOffset;
-  }
+  bool get showJumpPage => themeData.options.showJumpPage;
+
+  bool get showEdgePages => themeData.options.showEdgePages;
+
+  int get jumpPageOffset => themeData.options.jumpPageOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -70,25 +45,25 @@ class PageNavigator extends StatelessWidget {
   List<Widget> _getItems() {
     var items = [
       _getFirstPage(),
-      if (showJumpPage) const SizedBox(width: 10),
-      if (showJumpPage) _getPageItem(currentPageIndex - actualJump),
-      if (showJumpPage) const SizedBox(width: 5),
+      const SizedBox(width: 10),
+      if (showJumpPage) _getPageItem(currentPageIndex - jumpPageOffset),
+      const SizedBox(width: 5),
       _getPageItem(currentPageIndex - 2),
       _getPageItem(currentPageIndex - 1),
       _getPageItem(currentPageIndex),
       _getPageItem(currentPageIndex + 1),
       _getPageItem(currentPageIndex + 2),
-      if (showJumpPage) const SizedBox(width: 5),
-      if (showJumpPage && currentPageIndex < (pagesCount - 1) - actualJump)
-        _getPageItem(currentPageIndex + actualJump),
-      if (showJumpPage) const SizedBox(width: 10),
+      const SizedBox(width: 5),
+      if (showJumpPage && currentPageIndex < (pagesCount - 1) - jumpPageOffset)
+        _getPageItem(currentPageIndex + jumpPageOffset),
+      const SizedBox(width: 10),
       _getLastPage(),
     ];
     return items.whereType<Widget>().toList();
   }
 
   Widget? _getFirstPage() {
-    if (!showEdgePages && currentPageIndex <= actualJump) {
+    if (!showEdgePages && currentPageIndex <= jumpPageOffset) {
       return SizedBox(
         width: itemSize,
       );
@@ -123,7 +98,7 @@ class PageNavigator extends StatelessWidget {
         return null;
       }
       return PageNavigatorButtom(
-        style: style,
+        style: themeData.style,
         pageIndex: pageIndex,
         isSelected: pageIndex == currentPageIndex,
         onSelected: () => onPageSelected(pageIndex),
