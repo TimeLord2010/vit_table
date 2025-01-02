@@ -1,4 +1,4 @@
-import 'package:vit_table/data/models/page_navigator_options.dart';
+import 'package:vit_table/ui/theme/page_navigator_options.dart';
 
 import 'page_navigator_style.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:vit_table/data/models/page_navigator_style.dart';
 import 'package:vit_table/ui/components/atoms/vit_button.dart';
 import 'package:vit_table/ui/theme/colors.dart';
+import 'package:vit_table/ui/theme/page_navigator_style.dart';
 
 class PageNavigatorButtom extends StatelessWidget {
   /// MEANT FOR INTERNAL USE ONLY
