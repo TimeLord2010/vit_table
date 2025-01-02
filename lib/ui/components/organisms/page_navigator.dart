@@ -70,18 +70,18 @@ class PageNavigator extends StatelessWidget {
   List<Widget> _getItems() {
     var items = [
       _getFirstPage(),
-      const SizedBox(width: 10),
-      _getPageItem(currentPageIndex - actualJump),
-      const SizedBox(width: 5),
+      if (showJumpPage) const SizedBox(width: 10),
+      if (showJumpPage) _getPageItem(currentPageIndex - actualJump),
+      if (showJumpPage) const SizedBox(width: 5),
       _getPageItem(currentPageIndex - 2),
       _getPageItem(currentPageIndex - 1),
       _getPageItem(currentPageIndex),
       _getPageItem(currentPageIndex + 1),
       _getPageItem(currentPageIndex + 2),
-      const SizedBox(width: 5),
-      if (currentPageIndex < (pagesCount - 1) - actualJump)
+      if (showJumpPage) const SizedBox(width: 5),
+      if (showJumpPage && currentPageIndex < (pagesCount - 1) - actualJump)
         _getPageItem(currentPageIndex + actualJump),
-      const SizedBox(width: 10),
+      if (showJumpPage) const SizedBox(width: 10),
       _getLastPage(),
     ];
     return items.whereType<Widget>().toList();
