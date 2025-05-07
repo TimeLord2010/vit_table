@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
@@ -11,6 +13,40 @@ import 'package:vit_table/ui/theme/vit_table_theme.dart';
 
 import '../../../data/models/vit_table_row.dart' as row;
 
+typedef ScrollbarBuilder = RawScrollbar Function(
+  ScrollController? controller,
+  Widget child,
+);
+
+class VitScrollbarBehavior extends ScrollBehavior {
+  const VitScrollbarBehavior({this.scrollbarBuilder});
+
+  final ScrollbarBuilder? scrollbarBuilder;
+
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    if (scrollbarBuilder != null) {
+      return scrollbarBuilder!(
+        details.controller,
+        child,
+      );
+    }
+    return super.buildScrollbar(context, child, details);
+  }
+
+  // Permite também rolar com mouse e toque, se precisar
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        ...super.dragDevices,
+      };
+}
+
 class VitTable extends StatelessWidget {
   const VitTable({
     super.key,
@@ -23,6 +59,7 @@ class VitTable extends StatelessWidget {
     this.sortColumnIndex,
     this.enableHorizontalScroll = false,
     this.isAscSort = true,
+    this.scrollbarBuilder,
   });
 
   final List<VitTableColumn> columns;
@@ -33,11 +70,10 @@ class VitTable extends StatelessWidget {
   final bool enableHorizontalScroll;
   final int? sortColumnIndex;
   final bool isAscSort;
+  final ScrollbarBuilder? scrollbarBuilder;
 
   bool get hasPaginator {
-    return currentPageIndex != null &&
-        pageCount != null &&
-        onPageSelected != null;
+    return currentPageIndex != null && pageCount != null && onPageSelected != null;
   }
 
   /// Gets the style from the class instance or from the theme in build context.
@@ -72,70 +108,73 @@ class VitTable extends StatelessWidget {
 
   Widget _tableContainer(BuildContext context) {
     var style = _getStyle(context);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var totalWidth = constraints.maxWidth;
+    return ScrollConfiguration(
+      behavior: scrollbarBuilder != null ? VitScrollbarBehavior(scrollbarBuilder: scrollbarBuilder) : ScrollConfiguration.of(context),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          var totalWidth = constraints.maxWidth;
 
-        // Column indices present here should not be rendered. We need this to remove the
-        // respective cells in each row.
-        // Columns become invalid if there is not enough space to display all the columns.
-        var invalidColumns = <int>[];
+          // Column indices present here should not be rendered. We need this to remove the
+          // respective cells in each row.
+          // Columns become invalid if there is not enough space to display all the columns.
+          var invalidColumns = <int>[];
 
-        var currentColumns = [...columns];
+          var currentColumns = [...columns];
 
-        while (currentColumns.isNotEmpty && !enableHorizontalScroll) {
-          // Checking if the existing width is enough to display the current list of columns
-          double requiredWidth = getRequiredWidth(currentColumns);
-          if (totalWidth >= requiredWidth) {
-            break;
+          while (currentColumns.isNotEmpty && !enableHorizontalScroll) {
+            // Checking if the existing width is enough to display the current list of columns
+            double requiredWidth = getRequiredWidth(currentColumns);
+            if (totalWidth >= requiredWidth) {
+              break;
+            }
+
+            // Finding column with least priority
+            var leastPriorityColumn = currentColumns.reduce((p, x) {
+              return x.priority > p.priority ? x : p;
+            });
+
+            // Keeping track of invalid columns
+            var columnIndex = columns.indexOf(leastPriorityColumn);
+            if (columnIndex < 0) {
+              throw Exception('Column index not found');
+            }
+            invalidColumns.add(columnIndex);
+
+            // Removing column to update width calculations
+            currentColumns.remove(leastPriorityColumn);
           }
 
-          // Finding column with least priority
-          var leastPriorityColumn = currentColumns.reduce((p, x) {
-            return x.priority > p.priority ? x : p;
-          });
-
-          // Keeping track of invalid columns
-          var columnIndex = columns.indexOf(leastPriorityColumn);
-          if (columnIndex < 0) {
-            throw Exception('Column index not found');
-          }
-          invalidColumns.add(columnIndex);
-
-          // Removing column to update width calculations
-          currentColumns.remove(leastPriorityColumn);
-        }
-
-        // Creating container to build the border.
-        return Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: gray3,
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-
-          // Preventing the contents of the inner container from overflowing.
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              color: white,
-              constraints: BoxConstraints(
-                minHeight: style.minHeight ?? style.height ?? 0,
-                maxHeight: style.height ?? constraints.maxHeight,
+          // Creating container to build the border.
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: gray3,
               ),
-              child: _table(
-                context: context,
-                currentColumns: currentColumns,
-                invalidColumns: invalidColumns,
+              borderRadius: BorderRadius.circular(8),
+            ),
 
-                // Subtracting the border sides from the available width.
-                maxWidth: constraints.maxWidth - 2,
+            // Preventing the contents of the inner container from overflowing.
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                color: white,
+                constraints: BoxConstraints(
+                  minHeight: style.minHeight ?? style.height ?? 0,
+                  maxHeight: style.height ?? constraints.maxHeight,
+                ),
+                child: _table(
+                  context: context,
+                  currentColumns: currentColumns,
+                  invalidColumns: invalidColumns,
+
+                  // Subtracting the border sides from the available width.
+                  maxWidth: constraints.maxWidth - 2,
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
