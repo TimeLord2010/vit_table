@@ -23,6 +23,11 @@ class VitTableStyle {
 
   final PageNavigatorThemeData pageNavigatorThemeData;
 
+  final RawScrollbar Function(
+    ScrollController? controller,
+    Widget child,
+  )? scrollbarBuilder;
+
   const VitTableStyle({
     this.height,
     this.minHeight,
@@ -30,6 +35,7 @@ class VitTableStyle {
     this.rowHeight,
     this.innerBottom,
     this.onEmptyWidget,
+    this.scrollbarBuilder,
     PageNavigatorThemeData? pageNavigatorThemeData,
   }) : pageNavigatorThemeData =
             pageNavigatorThemeData ?? const PageNavigatorThemeData();

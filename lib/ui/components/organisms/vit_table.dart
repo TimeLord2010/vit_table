@@ -13,40 +13,6 @@ import 'package:vit_table/ui/theme/vit_table_theme.dart';
 
 import '../../../data/models/vit_table_row.dart' as row;
 
-typedef ScrollbarBuilder = RawScrollbar Function(
-  ScrollController? controller,
-  Widget child,
-);
-
-class VitScrollbarBehavior extends ScrollBehavior {
-  const VitScrollbarBehavior({this.scrollbarBuilder});
-
-  final ScrollbarBuilder? scrollbarBuilder;
-
-  @override
-  Widget buildScrollbar(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
-    if (scrollbarBuilder != null) {
-      return scrollbarBuilder!(
-        details.controller,
-        child,
-      );
-    }
-    return super.buildScrollbar(context, child, details);
-  }
-
-  // Permite também rolar com mouse e toque, se precisar
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        ...super.dragDevices,
-      };
-}
-
 class VitTable extends StatelessWidget {
   const VitTable({
     super.key,
@@ -70,10 +36,13 @@ class VitTable extends StatelessWidget {
   final bool enableHorizontalScroll;
   final int? sortColumnIndex;
   final bool isAscSort;
-  final ScrollbarBuilder? scrollbarBuilder;
+  final RawScrollbar Function(ScrollController? controller, Widget child)?
+      scrollbarBuilder;
 
   bool get hasPaginator {
-    return currentPageIndex != null && pageCount != null && onPageSelected != null;
+    return currentPageIndex != null &&
+        pageCount != null &&
+        onPageSelected != null;
   }
 
   /// Gets the style from the class instance or from the theme in build context.
@@ -108,8 +77,11 @@ class VitTable extends StatelessWidget {
 
   Widget _tableContainer(BuildContext context) {
     var style = _getStyle(context);
+    var scrollbarBuilder = this.scrollbarBuilder ?? style.scrollbarBuilder;
     return ScrollConfiguration(
-      behavior: scrollbarBuilder != null ? VitScrollbarBehavior(scrollbarBuilder: scrollbarBuilder) : ScrollConfiguration.of(context),
+      behavior: scrollbarBuilder != null
+          ? _VitScrollbarBehavior(scrollbarBuilder: scrollbarBuilder)
+          : ScrollConfiguration.of(context),
       child: LayoutBuilder(
         builder: (context, constraints) {
           var totalWidth = constraints.maxWidth;
@@ -250,4 +222,32 @@ class VitTable extends StatelessWidget {
 
     return column(context, false);
   }
+}
+
+class _VitScrollbarBehavior extends ScrollBehavior {
+  const _VitScrollbarBehavior({this.scrollbarBuilder});
+
+  final RawScrollbar Function(
+    ScrollController? controller,
+    Widget child,
+  )? scrollbarBuilder;
+
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    if (scrollbarBuilder != null) {
+      return scrollbarBuilder!(details.controller, child);
+    }
+    return super.buildScrollbar(context, child, details);
+  }
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        ...super.dragDevices,
+      };
 }
