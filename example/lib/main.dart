@@ -172,7 +172,10 @@ class _MyAppState extends State<MyApp> {
         for (var profile in profiles)
           VitTableRow(
             cells: [
-              Checkbox(value: profile.name.startsWith('A'), onChanged: (value) {}),
+              Checkbox(
+                value: profile.name.startsWith('A'),
+                onChanged: (value) {},
+              ),
               Text(profile.name),
               Text(profile.createdAt.toString()),
               const Icon(Icons.edit),
@@ -185,16 +188,6 @@ class _MyAppState extends State<MyApp> {
   Widget _wideTable() {
     return VitTable(
       enableHorizontalScroll: true,
-      scrollbarBuilder: (controller, child) {
-        return RawScrollbar(
-          controller: controller,
-          thumbVisibility: true,
-          thickness: 4.0,
-          thumbColor: Colors.black87,
-          radius: const Radius.circular(4),
-          child: child, // sempre não-nulo
-        );
-      },
       columns: [
         VitTableColumn(title: 'Nº', width: 60),
         VitTableColumn(title: 'Id', width: 350),
@@ -253,7 +246,7 @@ class _MyAppState extends State<MyApp> {
           thumbVisibility: true,
           thickness: 8.0,
           radius: const Radius.circular(4),
-          child: child, // sempre não-nulo
+          child: child,
         );
       },
       style: const VitTableStyle(
