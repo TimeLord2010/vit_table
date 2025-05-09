@@ -2,11 +2,11 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:vit_table/data/models/page_navigator_options.dart';
-import 'package:vit_table/data/models/page_navigator_theme.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/data/models/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/vit_table.dart';
+import 'package:vit_table/ui/theme/page_navigator_options.dart';
+import 'package:vit_table/ui/theme/page_navigator_theme.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 void main() {
@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
             columns: [
               VitTableColumn(title: 'Index'),
               VitTableColumn(title: 'Enabled', expandable: true),
-              VitTableColumn(title: 'Number')
+              VitTableColumn(title: 'Number'),
             ],
             rows: List.generate(pageSize, (index) {
               var random = Random();
@@ -140,6 +140,7 @@ class _MyAppState extends State<MyApp> {
 
   VitTable _complexTable() {
     return VitTable(
+      enableHorizontalScroll: true,
       style: const VitTableStyle(
         innerBottom: SizedBox(
           height: 40,
@@ -172,7 +173,9 @@ class _MyAppState extends State<MyApp> {
           VitTableRow(
             cells: [
               Checkbox(
-                  value: profile.name.startsWith('A'), onChanged: (value) {}),
+                value: profile.name.startsWith('A'),
+                onChanged: (value) {},
+              ),
               Text(profile.name),
               Text(profile.createdAt.toString()),
               const Icon(Icons.edit),
@@ -236,6 +239,16 @@ class _MyAppState extends State<MyApp> {
 
   VitTable _simpleTable() {
     return VitTable(
+      enableHorizontalScroll: true,
+      scrollbarBuilder: (controller, child) {
+        return RawScrollbar(
+          controller: controller,
+          thumbVisibility: true,
+          thickness: 8.0,
+          radius: const Radius.circular(4),
+          child: child,
+        );
+      },
       style: const VitTableStyle(
         height: 150,
       ),
