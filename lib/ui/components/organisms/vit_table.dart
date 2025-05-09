@@ -18,34 +18,6 @@ typedef ScrollbarBuilder = RawScrollbar Function(
   Widget child,
 );
 
-class VitScrollbarBehavior extends ScrollBehavior {
-  const VitScrollbarBehavior({this.scrollbarBuilder});
-
-  final ScrollbarBuilder? scrollbarBuilder;
-
-  @override
-  Widget buildScrollbar(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
-    if (scrollbarBuilder != null) {
-      return scrollbarBuilder!(
-        details.controller,
-        child,
-      );
-    }
-    return super.buildScrollbar(context, child, details);
-  }
-
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        ...super.dragDevices,
-      };
-}
-
 class VitTable extends StatelessWidget {
   const VitTable({
     super.key,
