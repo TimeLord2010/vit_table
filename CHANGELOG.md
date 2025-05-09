@@ -1,3 +1,6 @@
+## 2.0.1
+* FEAT: Added the ability to customize the scroll bar.
+
 ## 2.0.0
 
 * REFAC: Page style properties is defined in the class `PageNavigatorStyle` instead of `VitTableStyle`.
