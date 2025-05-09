@@ -38,7 +38,6 @@ class VitScrollbarBehavior extends ScrollBehavior {
     return super.buildScrollbar(context, child, details);
   }
 
-  // Permite também rolar com mouse e toque, se precisar
   @override
   Set<PointerDeviceKind> get dragDevices => {
         PointerDeviceKind.touch,
