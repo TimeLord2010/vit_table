@@ -1,4 +1,9 @@
+## 2.0.2
+
+* BUILD: Updated dependencies
+
 ## 2.0.1
+
 * FEAT: Added the ability to customize the scroll bar.
 
 ## 2.0.0
