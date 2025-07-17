@@ -1,3 +1,7 @@
+## 3.0.1
+
+* DOC: Updated documentation
+
 ## 3.0.0
 
 * BREAKING: `VitTableColumn` now accepts a `Widget` in the property "title" instead of a `String`.
