@@ -53,7 +53,7 @@ class VitTable extends StatelessWidget {
     var s = VitTableTheme.maybeOf(context);
     var defaultValue = s ?? const VitTableStyle();
     if (style != null) {
-      return style!.merge(defaultValue);
+      return defaultValue.merge(style!);
     }
     return defaultValue;
   }
@@ -157,7 +157,7 @@ class VitTable extends StatelessWidget {
     required List<int> invalidColumns,
     required double maxWidth,
   }) {
-    var rowMargin = style?.rowStyle?.margin;
+    var rowMargin = style?.row?.margin;
     var horizontalMargin = (rowMargin?.left ?? 0) + (rowMargin?.right ?? 0);
 
     // Setting the right space to compensate for extras space on the right

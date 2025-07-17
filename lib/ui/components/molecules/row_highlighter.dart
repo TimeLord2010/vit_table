@@ -31,12 +31,12 @@ class RowHighlighter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var rowStyle = style.rowStyle;
+    var rowStyle = style.row;
     var alternatingStyle = rowStyle?.alternatingStyle;
 
     Decoration? getDecoration(bool isMouseOver) {
       if (isMouseOver) {
-        var s = style.rowStyle?.mouseOverDecoration;
+        var s = style.row?.mouseOverDecoration;
         if (s != null) return s;
       }
       if (alternatingStyle != null) {
@@ -57,8 +57,7 @@ class RowHighlighter extends StatelessWidget {
         return Container(
           decoration: getDecoration(isMouseOver),
           margin: rowStyle?.margin,
-          constraints:
-              BoxConstraints(minHeight: style.rowStyle?.minRowHeight ?? 40),
+          constraints: BoxConstraints(minHeight: style.row?.minRowHeight ?? 40),
           child: child,
         );
       },

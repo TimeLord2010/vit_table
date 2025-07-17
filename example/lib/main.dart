@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/data/models/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/vit_table.dart';
+import 'package:vit_table/ui/theme/header_style.dart';
 import 'package:vit_table/ui/theme/page_navigator_options.dart';
 import 'package:vit_table/ui/theme/page_navigator_theme.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
@@ -48,13 +49,28 @@ class _MyAppState extends State<MyApp> {
       home: VitTableTheme(
         data: VitTableStyle(
             decoration: BoxDecoration(
-          color: Colors.white,
-          border: BoxBorder.all(
-            color: const Color.fromARGB(255, 183, 183, 183),
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        )),
+              color: Colors.white,
+              border: BoxBorder.all(
+                color: const Color.fromARGB(255, 183, 183, 183),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            header: HeaderStyle(
+              sortIcon: (isAscending) {
+                if (isAscending != null) {
+                  return AnimatedRotation(
+                    duration: const Duration(milliseconds: 200),
+                    turns: isAscending ? 0.5 : 0,
+                    child: const Icon(Icons.south_rounded),
+                  );
+                }
+                return const Icon(
+                  Icons.south_rounded,
+                  color: Color.fromARGB(46, 0, 0, 0),
+                );
+              },
+            )),
         child: Scaffold(
           body: PageView(
             children: [

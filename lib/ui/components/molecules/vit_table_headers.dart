@@ -32,7 +32,7 @@ class VitTableHeaders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: style.headerHeight ?? kDefaultHeaderHeight,
+      height: style.header?.height ?? kDefaultHeaderHeight,
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -51,37 +51,16 @@ class VitTableHeaders extends StatelessWidget {
 
   Widget _buildColumn(int index, VitTableColumn column) {
     var isCurrentIndex = index == sortingColumnIndex;
+    var sortIconAtRight = style.header?.showSortIconRight ?? true;
     return VitTableCell(
       column: column,
       allowExpand: allowExpand,
       child: Row(
         children: [
-          if (column.onSort != null)
+          if (!sortIconAtRight && column.onSort != null)
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: VitButton(
-                onPressed: () {
-                  var asc = isAscSort;
-                  if (isCurrentIndex) {
-                    asc = !isAscSort;
-                  } else {
-                    asc = true;
-                  }
-                  var sortFn = column.onSort;
-                  if (sortFn != null) sortFn(asc);
-                },
-                child: switch (isCurrentIndex) {
-                  true => _sortIcon(const Icon(
-                      Icons.south_rounded,
-                      size: 20,
-                    )),
-                  false => const Icon(
-                      Icons.south_rounded,
-                      size: 20,
-                      color: Colors.grey,
-                    ),
-                },
-              ),
+              child: _sortButton(isCurrentIndex, column),
             ),
           Expanded(
             child: FittedBox(
@@ -90,9 +69,44 @@ class VitTableHeaders extends StatelessWidget {
               child: column.title,
             ),
           ),
+          if (sortIconAtRight && column.onSort != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: _sortButton(isCurrentIndex, column),
+            )
         ],
       ),
     );
+  }
+
+  VitButton _sortButton(bool isCurrentIndex, VitTableColumn column) {
+    var headerStyle = style.header;
+    Widget Function(bool? isAscending) iconBuilder = headerStyle?.sortIcon ??
+        (bool? isAsc) {
+          if (isAsc != null) {
+            return _sortIcon(const Icon(
+              Icons.south_rounded,
+              size: 20,
+            ));
+          }
+          return const Icon(
+            Icons.south_rounded,
+            size: 20,
+            color: Colors.grey,
+          );
+        };
+    return VitButton(
+        onPressed: () {
+          var asc = isAscSort;
+          if (isCurrentIndex) {
+            asc = !isAscSort;
+          } else {
+            asc = true;
+          }
+          var sortFn = column.onSort;
+          if (sortFn != null) sortFn(asc);
+        },
+        child: iconBuilder(isCurrentIndex ? isAscSort : null));
   }
 
   Widget _sortIcon(Widget child) {

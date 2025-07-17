@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:vit_table/ui/theme/header_style.dart';
 import 'package:vit_table/ui/theme/row_style.dart';
 
 import 'page_navigator_theme.dart';
@@ -10,9 +11,6 @@ class VitTableStyle {
   /// The minimum height of the table.
   final double? minHeight;
 
-  /// The height of the header.
-  final double? headerHeight;
-
   final Decoration? decoration;
 
   /// The widget to show at the bottom of the table. Shown inside the table.
@@ -23,7 +21,9 @@ class VitTableStyle {
 
   final PageNavigatorThemeData pageNavigatorThemeData;
 
-  final RowStyle? rowStyle;
+  final RowStyle? row;
+
+  final HeaderStyle? header;
 
   final RawScrollbar Function(
     ScrollController? controller,
@@ -33,8 +33,8 @@ class VitTableStyle {
   const VitTableStyle({
     this.height,
     this.minHeight,
-    this.headerHeight,
-    this.rowStyle,
+    this.header,
+    this.row,
     this.innerBottom,
     this.onEmptyWidget,
     this.scrollbarBuilder,
@@ -48,10 +48,8 @@ class VitTableStyle {
     return VitTableStyle(
       height: other.height ?? height,
       minHeight: other.minHeight ?? minHeight,
-      headerHeight: other.headerHeight ?? headerHeight,
-      rowStyle: other.rowStyle != null
-          ? (rowStyle?.merge(other.rowStyle!) ?? other.rowStyle)
-          : rowStyle,
+      header: header?.merge(other.header),
+      row: other.row != null ? (row?.merge(other.row!) ?? other.row) : row,
       innerBottom: other.innerBottom ?? innerBottom,
       onEmptyWidget: other.onEmptyWidget ?? onEmptyWidget,
       scrollbarBuilder: other.scrollbarBuilder ?? scrollbarBuilder,
