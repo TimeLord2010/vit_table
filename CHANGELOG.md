@@ -1,3 +1,9 @@
+## 3.0.2
+
+* BREAKING: `VitTableStyle.headerHeight` was removed in favor of `HeaderStyle.height`.
+* FEAT: Its now possible to customize the sort icon and position using `HeaderStyle` class located on `VitTableStyle`.
+
+
 ## 3.0.1
 
 * DOC: Updated documentation
