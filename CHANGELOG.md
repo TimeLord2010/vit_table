@@ -1,3 +1,7 @@
+## 3.0.3
+
+* DOC: Updated documentation
+
 ## 3.0.2
 
 * BREAKING: `VitTableStyle.headerHeight` was removed in favor of `HeaderStyle.height`.

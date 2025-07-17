@@ -38,7 +38,7 @@ You can customize the height of the table header using the `headerHeight` proper
 
 ```dart
 style: const VitTableStyle(
-  headerHeight: 50,
+  header: HeaderStyle (height: 60),
 ),
 ```
 
@@ -59,11 +59,11 @@ style: const VitTableStyle(
 
 ### Row styling
 
-Customize row appearance using the `rowStyle` property:
+Customize row appearance using the `row` property:
 
 ```dart
 style: const VitTableStyle(
-  rowStyle: RowStyle(
+  row: RowStyle(
     // Row styling options
   ),
 ),
@@ -186,13 +186,3 @@ Here, all the columns will be visible if the table width has at least 310 pixels
 If `enableHorizontalScroll` is set to true, then `priority` will have no effect since columns will never vanish.
 
 Note that the `title` parameter accepts any Widget, so you can use `Text('Title')` or any other widget for the column header.
-
-# Roadmap
-
-- Header customization;
-  - Accept any widget to display in the header;
-  - Change the text style of the header.
-  - Change the background color.
-- Custom rows background color;
-- Custom rows background widget;
-- Custom table border color and radius;
