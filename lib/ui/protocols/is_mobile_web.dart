@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
-import 'dart:html';
+import 'package:web/web.dart';
 
 bool isMobile() {
   var userAgent = window.navigator.userAgent;

@@ -8,6 +8,7 @@ import 'package:vit_table/ui/components/organisms/vit_table.dart';
 import 'package:vit_table/ui/theme/page_navigator_options.dart';
 import 'package:vit_table/ui/theme/page_navigator_theme.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
+import 'package:vit_table/ui/theme/vit_table_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,33 +45,44 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Scaffold(
-        body: PageView(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Simple table example:'),
-                  const SizedBox(height: 5),
-                  _simpleTable(),
-                  const SizedBox(height: 30),
-                  const Text('Complex table example:'),
-                  const SizedBox(height: 5),
-                  _complexTable(),
-                  const SizedBox(height: 30),
-                  const Text('Large table'),
-                  const SizedBox(height: 5),
-                  _wideTable(),
-                ],
+      home: VitTableTheme(
+        data: VitTableStyle(
+            decoration: BoxDecoration(
+          color: Colors.white,
+          border: BoxBorder.all(
+            color: const Color.fromARGB(255, 183, 183, 183),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        )),
+        child: Scaffold(
+          body: PageView(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Simple table example:'),
+                    const SizedBox(height: 5),
+                    _simpleTable(),
+                    const SizedBox(height: 30),
+                    const Text('Complex table example:'),
+                    const SizedBox(height: 5),
+                    _complexTable(),
+                    const SizedBox(height: 30),
+                    const Text('Large table'),
+                    const SizedBox(height: 5),
+                    _wideTable(),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _largeTable(),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _largeTable(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -101,9 +113,9 @@ class _MyAppState extends State<MyApp> {
           child: VitTable(
             enableHorizontalScroll: true,
             columns: [
-              VitTableColumn(title: 'Index'),
-              VitTableColumn(title: 'Enabled', expandable: true),
-              VitTableColumn(title: 'Number'),
+              VitTableColumn(title: const Text('Index')),
+              VitTableColumn(title: const Text('Enabled'), flex: 1),
+              VitTableColumn(title: const Text('Number')),
             ],
             rows: List.generate(pageSize, (index) {
               var random = Random();
@@ -152,21 +164,21 @@ class _MyAppState extends State<MyApp> {
       sortColumnIndex: sortColumnIndex,
       isAscSort: isAscSort,
       columns: [
-        VitTableColumn(title: 'Select', width: 70),
+        VitTableColumn(title: const Text('Select'), width: 70),
         VitTableColumn(
-          title: 'Profile',
-          expandable: true,
+          title: const Text('Profile'),
+          flex: 1,
           onSort: (asc) {
             _sort(1, (profile) => profile.name);
           },
         ),
         VitTableColumn(
-          title: 'Created on',
+          title: const Text('Created on'),
           onSort: (asc) {
             _sort(2, (profile) => profile.createdAt.toString());
           },
         ),
-        VitTableColumn(title: 'Actions', width: 100),
+        VitTableColumn(title: const Text('Actions'), width: 100),
       ],
       rows: [
         for (var profile in profiles)
@@ -189,15 +201,15 @@ class _MyAppState extends State<MyApp> {
     return VitTable(
       enableHorizontalScroll: true,
       columns: [
-        VitTableColumn(title: 'Nº', width: 60),
-        VitTableColumn(title: 'Id', width: 350),
+        VitTableColumn(title: const Text('Nº'), width: 60),
+        VitTableColumn(title: const Text('Id'), width: 350),
         VitTableColumn(
-          title: 'Name',
-          expandable: true,
+          title: const Text('Name'),
+          flex: 1,
         ),
-        VitTableColumn(title: 'Email'),
-        VitTableColumn(title: 'Date', width: 100),
-        VitTableColumn(title: 'Actions', width: 100),
+        VitTableColumn(title: const Text('Email')),
+        VitTableColumn(title: const Text('Date'), width: 100),
+        VitTableColumn(title: const Text('Actions'), width: 100),
       ],
       rows: const [
         VitTableRow(
@@ -253,10 +265,10 @@ class _MyAppState extends State<MyApp> {
         height: 150,
       ),
       columns: [
-        VitTableColumn(title: 'Code', width: 60, priority: 1),
-        VitTableColumn(title: 'Name', priority: 2),
-        VitTableColumn(title: 'Gender', width: 100, priority: 4),
-        VitTableColumn(title: 'Birth', width: 100, priority: 3),
+        VitTableColumn(title: const Text('Code'), width: 60, priority: 1),
+        VitTableColumn(title: const Text('Name'), priority: 2),
+        VitTableColumn(title: const Text('Gender'), width: 100, priority: 4),
+        VitTableColumn(title: const Text('Birth'), width: 100, priority: 3),
       ],
       rows: const [
         VitTableRow(

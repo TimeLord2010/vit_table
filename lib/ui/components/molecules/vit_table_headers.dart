@@ -87,12 +87,7 @@ class VitTableHeaders extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
-              child: Text(
-                column.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: column.title,
             ),
           ),
         ],

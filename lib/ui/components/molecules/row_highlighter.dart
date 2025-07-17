@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/ui/components/atoms/mouse_hover_listener.dart';
 import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
-import 'package:vit_table/ui/protocols/is_mobile.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 
 /// Builds the row on a VitTable.
@@ -32,23 +31,34 @@ class RowHighlighter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var mouseExists = !isMobile();
-    var hasBackground = rowIndex % 2 == 0;
-    Color? getBackgroundColor(bool isMouseOver) {
-      if (mouseExists && isMouseOver) {
-        const int v = 240;
-        return const Color.fromARGB(255, v, v, v);
+    var rowStyle = style.rowStyle;
+    var alternatingStyle = rowStyle?.alternatingStyle;
+
+    Decoration? getDecoration(bool isMouseOver) {
+      if (isMouseOver) {
+        var s = style.rowStyle?.mouseOverDecoration;
+        if (s != null) return s;
       }
-      return hasBackground ? const Color.fromARGB(255, 248, 248, 248) : null;
+      if (alternatingStyle != null) {
+        var isEvenAlternation = alternatingStyle.isEven;
+        var hasBackground = switch (isEvenAlternation) {
+          true => rowIndex % 2 == 0,
+          false => rowIndex % 3 == 0,
+        };
+        if (hasBackground) {
+          return alternatingStyle.decoration;
+        }
+      }
+      return rowStyle?.decoration;
     }
 
     return MouseHoverListener(
       builder: (isMouseOver, child) {
         return Container(
-          decoration: BoxDecoration(
-            color: getBackgroundColor(isMouseOver),
-          ),
-          height: style.rowHeight ?? 40,
+          decoration: getDecoration(isMouseOver),
+          margin: rowStyle?.margin,
+          constraints:
+              BoxConstraints(minHeight: style.rowStyle?.minRowHeight ?? 40),
           child: child,
         );
       },

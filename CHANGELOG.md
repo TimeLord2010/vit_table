@@ -1,3 +1,12 @@
+## 3.0.0
+
+* BREAKING: `VitTableColumn` now accepts a `Widget` in the property "title" instead of a `String`.
+* BREAKING: `VitTableColumn` no longer has property "expandable". Use new property "flex" instead.
+* BREAKING: `VitTableStyle` no longer has "rowHeight". Use "minRowHeight" from `RowStyle` instead.
+* FEAT: It's now possible to change multiple attributes of the table container, such as background color through `VitTableStyle.decoration`.
+* FEAT: It's now possible to change multiple aspects of the row using the new style class `RowStyle` located inside `VitTableStyle`.
+
+
 ## 2.0.2
 
 * BUILD: Updated dependencies

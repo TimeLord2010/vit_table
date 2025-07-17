@@ -27,7 +27,7 @@ class _MouseHoverListenerState extends State<MouseHoverListener> {
   @override
   Widget build(BuildContext context) {
     if (!widget.enabled || isMobile()) {
-      return widget.builder(true, widget.child);
+      return widget.builder(false, widget.child);
     }
     return MouseRegion(
       cursor: widget.cursor ?? SystemMouseCursors.click,

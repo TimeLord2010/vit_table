@@ -31,13 +31,15 @@ class VitTableCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = column.width;
-    if (!allowExpand || !column.expandable) {
+    var flex = column.flex;
+    if (!allowExpand || flex == null) {
       return SizedBox(
         width: width,
         child: content,
       );
     }
     return Expanded(
+      flex: flex,
       child: Container(
         constraints: BoxConstraints(
           minWidth: width,

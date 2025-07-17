@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:vit_table/ui/theme/row_style.dart';
 
 import 'page_navigator_theme.dart';
 
@@ -12,8 +13,7 @@ class VitTableStyle {
   /// The height of the header.
   final double? headerHeight;
 
-  /// The height of each row.
-  final double? rowHeight;
+  final Decoration? decoration;
 
   /// The widget to show at the bottom of the table. Shown inside the table.
   final Widget? innerBottom;
@@ -22,6 +22,8 @@ class VitTableStyle {
   final Widget? onEmptyWidget;
 
   final PageNavigatorThemeData pageNavigatorThemeData;
+
+  final RowStyle? rowStyle;
 
   final RawScrollbar Function(
     ScrollController? controller,
@@ -32,10 +34,30 @@ class VitTableStyle {
     this.height,
     this.minHeight,
     this.headerHeight,
-    this.rowHeight,
+    this.rowStyle,
     this.innerBottom,
     this.onEmptyWidget,
     this.scrollbarBuilder,
+    this.decoration,
     PageNavigatorThemeData? pageNavigatorThemeData,
-  }) : pageNavigatorThemeData = pageNavigatorThemeData ?? const PageNavigatorThemeData();
+  }) : pageNavigatorThemeData =
+            pageNavigatorThemeData ?? const PageNavigatorThemeData();
+
+  /// Merges the current VitTableStyle with another, prioritizing non-null values from the other instance.
+  VitTableStyle merge(VitTableStyle other) {
+    return VitTableStyle(
+      height: other.height ?? height,
+      minHeight: other.minHeight ?? minHeight,
+      headerHeight: other.headerHeight ?? headerHeight,
+      rowStyle: other.rowStyle != null
+          ? (rowStyle?.merge(other.rowStyle!) ?? other.rowStyle)
+          : rowStyle,
+      innerBottom: other.innerBottom ?? innerBottom,
+      onEmptyWidget: other.onEmptyWidget ?? onEmptyWidget,
+      scrollbarBuilder: other.scrollbarBuilder ?? scrollbarBuilder,
+      decoration: other.decoration ?? decoration,
+      pageNavigatorThemeData:
+          pageNavigatorThemeData.merge(other.pageNavigatorThemeData),
+    );
+  }
 }

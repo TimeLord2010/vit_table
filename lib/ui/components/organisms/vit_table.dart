@@ -6,8 +6,6 @@ import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/ui/components/molecules/rows_manager.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_headers.dart';
 import 'package:vit_table/ui/components/organisms/page_navigator.dart';
-import 'package:vit_table/ui/protocols/column/get_required_width.dart';
-import 'package:vit_table/ui/theme/colors.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
 import 'package:vit_table/ui/theme/vit_table_theme.dart';
 
@@ -41,19 +39,23 @@ class VitTable extends StatelessWidget {
   final bool enableHorizontalScroll;
   final int? sortColumnIndex;
   final bool isAscSort;
-  final RawScrollbar Function(ScrollController? controller, Widget child)? scrollbarBuilder;
+  final RawScrollbar Function(ScrollController? controller, Widget child)?
+      scrollbarBuilder;
 
   bool get hasPaginator {
-    return currentPageIndex != null && pageCount != null && onPageSelected != null;
+    return currentPageIndex != null &&
+        pageCount != null &&
+        onPageSelected != null;
   }
 
   /// Gets the style from the class instance or from the theme in build context.
   VitTableStyle _getStyle(BuildContext context) {
-    if (style != null) {
-      return style!;
-    }
     var s = VitTableTheme.maybeOf(context);
-    return s ?? const VitTableStyle();
+    var defaultValue = s ?? const VitTableStyle();
+    if (style != null) {
+      return style!.merge(defaultValue);
+    }
+    return defaultValue;
   }
 
   @override
@@ -81,7 +83,9 @@ class VitTable extends StatelessWidget {
     var style = _getStyle(context);
     var scrollbarBuilder = this.scrollbarBuilder ?? style.scrollbarBuilder;
     return ScrollConfiguration(
-      behavior: scrollbarBuilder != null ? _VitScrollbarBehavior(scrollbarBuilder: scrollbarBuilder) : ScrollConfiguration.of(context),
+      behavior: scrollbarBuilder != null
+          ? _VitScrollbarBehavior(scrollbarBuilder: scrollbarBuilder)
+          : ScrollConfiguration.of(context),
       child: LayoutBuilder(
         builder: (context, constraints) {
           var totalWidth = constraints.maxWidth;
@@ -95,7 +99,7 @@ class VitTable extends StatelessWidget {
 
           while (currentColumns.isNotEmpty && !enableHorizontalScroll) {
             // Checking if the existing width is enough to display the current list of columns
-            double requiredWidth = getRequiredWidth(currentColumns);
+            double requiredWidth = _getRequiredWidth(currentColumns);
             if (totalWidth >= requiredWidth) {
               break;
             }
@@ -117,19 +121,16 @@ class VitTable extends StatelessWidget {
           }
 
           // Creating container to build the border.
+          var decoration = style.decoration;
           return Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: gray3,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: decoration,
 
             // Preventing the contents of the inner container from overflowing.
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: decoration is BoxDecoration
+                  ? decoration.borderRadius ?? BorderRadius.zero
+                  : BorderRadius.zero,
               child: Container(
-                color: white,
                 constraints: BoxConstraints(
                   minHeight: style.minHeight ?? style.height ?? 0,
                   maxHeight: style.height ?? constraints.maxHeight,
@@ -156,29 +157,33 @@ class VitTable extends StatelessWidget {
     required List<int> invalidColumns,
     required double maxWidth,
   }) {
+    var rowMargin = style?.rowStyle?.margin;
+    var horizontalMargin = (rowMargin?.left ?? 0) + (rowMargin?.right ?? 0);
+
     // Setting the right space to compensate for extras space on the right
     // side of the table in case [enableHorizontalScroll] is set to true and
     // the table is bigger than the columns width.
     double? rightSpace;
     if (enableHorizontalScroll) {
-      var rowsWidth = getRequiredWidth(currentColumns);
-      var value = maxWidth - rowsWidth;
-      if (value > 0) {
-        // We also need to subtract the border width of both sides.
-        if (value >= 2) {
-          rightSpace = value - 2;
-        } else {
-          rightSpace = value;
-        }
+      var rowsWidth = _getRequiredWidth(currentColumns);
+      var remainingHorizontalScace = maxWidth - rowsWidth;
+      if (remainingHorizontalScace > 0) {
+        rightSpace = remainingHorizontalScace + horizontalMargin;
       }
     }
 
-    var requiredWidth = getRequiredWidth(currentColumns);
+    var requiredWidth = _getRequiredWidth(currentColumns);
 
     Widget column(BuildContext context, bool hasHorizontalScroll) {
       var style = _getStyle(context);
       return LayoutBuilder(
         builder: (context, constraints) {
+          double width;
+          if (maxWidth < requiredWidth) {
+            width = requiredWidth + horizontalMargin;
+          } else {
+            width = maxWidth;
+          }
           Widget rows = RowsManager(
             invalidColumns: invalidColumns,
             currentColumns: currentColumns,
@@ -186,7 +191,7 @@ class VitTable extends StatelessWidget {
             columns: columns,
             rows: this.rows,
             style: style,
-            width: maxWidth < requiredWidth ? requiredWidth : maxWidth,
+            width: width,
             rightSpace: rightSpace,
           );
           return Column(
@@ -250,4 +255,8 @@ class _VitScrollbarBehavior extends ScrollBehavior {
         PointerDeviceKind.mouse,
         ...super.dragDevices,
       };
+}
+
+double _getRequiredWidth(Iterable<VitTableColumn> columns) {
+  return columns.fold(0.0, (p, x) => p + x.width) + 5;
 }
