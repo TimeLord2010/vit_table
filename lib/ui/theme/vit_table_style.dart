@@ -48,7 +48,7 @@ class VitTableStyle {
     return VitTableStyle(
       height: other.height ?? height,
       minHeight: other.minHeight ?? minHeight,
-      header: header?.merge(other.header),
+      header: header?.merge(other.header) ?? other.header,
       row: other.row != null ? (row?.merge(other.row!) ?? other.row) : row,
       innerBottom: other.innerBottom ?? innerBottom,
       onEmptyWidget: other.onEmptyWidget ?? onEmptyWidget,
