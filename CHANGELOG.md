@@ -1,3 +1,7 @@
+## 3.0.4
+
+* FIX: merge method from `VitTableStyle`.
+
 ## 3.0.3
 
 * DOC: Updated documentation
