@@ -1,6 +1,6 @@
 name: vit_table
 description: "Create simple yet beautiful tables"
-version: 3.0.4
+version: 3.0.5
 homepage:
 repository: https://github.com/TimeLord2010/vit_table
 
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  vit_dart_extensions: ^3.0.1
+  vit_dart_extensions: ^4.0.0
   web: ^1.1.1
 
 dev_dependencies:
