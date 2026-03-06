@@ -29,6 +29,7 @@ class VitTable extends StatelessWidget {
     this.enableHorizontalScroll = false,
     this.isAscSort = true,
     this.scrollbarBuilder,
+    this.padding,
   });
 
   final List<VitTableColumn> columns;
@@ -41,6 +42,7 @@ class VitTable extends StatelessWidget {
   final bool isAscSort;
   final RawScrollbar Function(ScrollController? controller, Widget child)?
       scrollbarBuilder;
+  final EdgeInsets? padding;
 
   bool get hasPaginator {
     return currentPageIndex != null &&
@@ -193,6 +195,7 @@ class VitTable extends StatelessWidget {
             style: style,
             width: width,
             rightSpace: rightSpace,
+            padding: padding,
           );
           return Column(
             children: [

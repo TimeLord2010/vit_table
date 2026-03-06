@@ -1,3 +1,7 @@
+## 3.1.0
+
+- FEAT: Added optional `padding` parameter to `VitTable` to apply padding to the internal scroll widget.
+
 ## 3.0.5
 
 - BUILD: Updated dependencies

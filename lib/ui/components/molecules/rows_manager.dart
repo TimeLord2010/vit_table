@@ -16,6 +16,7 @@ class RowsManager extends StatelessWidget {
     required this.style,
     required this.width,
     this.rightSpace,
+    this.padding,
   });
 
   final List<int> invalidColumns;
@@ -26,6 +27,7 @@ class RowsManager extends StatelessWidget {
   final VitTableStyle style;
   final double? rightSpace;
   final double width;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class RowsManager extends StatelessWidget {
                     maxWidth: width,
                   ),
                   child: ListView.builder(
+                    padding: padding,
                     itemBuilder: (context, index) => _rowFromIndex(index),
                     itemCount: rows.length,
                   ),
