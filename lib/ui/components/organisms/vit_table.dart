@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
 import 'package:vit_table/data/models/vit_table_reorder_mode.dart';
 import 'package:vit_table/ui/components/molecules/rows_manager.dart';

@@ -1,3 +1,7 @@
+## 3.2.1
+
+- FIX: Fixed header misalignment when using horizontal margin in RowStyle
+
 ## 3.2.0
 
 - FEAT: Added row reordering via drag and drop. New parameters on `VitTable`: `isReordering`, `onReorder`, `reorderMode` (`VitTableReorderMode.row`, `leading`, `trailing`), and `reorderIcon`.

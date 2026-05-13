@@ -1,12 +1,12 @@
 name: vit_table
-description: "Create simple yet beautiful tables"
-version: 3.2.0
+description: 'Create simple yet beautiful tables'
+version: 3.2.1
 homepage:
 repository: https://github.com/TimeLord2010/vit_table
 
 environment:
   sdk: ^3.5.0
-  flutter: ">=1.17.0"
+  flutter: '>=1.17.0'
 
 dependencies:
   flutter:
