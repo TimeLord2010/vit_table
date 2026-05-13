@@ -231,6 +231,7 @@ class VitTable extends StatelessWidget {
                 allowExpand: !hasHorizontalScroll,
                 isReordering: isReordering,
                 reorderMode: reorderMode,
+                horizontalMargin: horizontalMargin,
               ),
               switch (constraints.maxHeight.isInfinite) {
                 true => rows,

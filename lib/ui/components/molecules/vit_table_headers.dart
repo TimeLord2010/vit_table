@@ -21,6 +21,7 @@ class VitTableHeaders extends StatelessWidget {
     this.allowExpand = true,
     this.isReordering = false,
     this.reorderMode = VitTableReorderMode.row,
+    this.horizontalMargin = 0,
   });
 
   final List<VitTableColumn> columns;
@@ -33,6 +34,7 @@ class VitTableHeaders extends StatelessWidget {
   final bool allowExpand;
   final bool isReordering;
   final VitTableReorderMode reorderMode;
+  final double horizontalMargin;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +47,18 @@ class VitTableHeaders extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
-        children: [
-          if (isReordering && reorderMode == VitTableReorderMode.leading)
-            const SizedBox(width: kReorderHandleWidth),
-          for (int i = 0; i < columns.length; i++) _buildColumn(i, columns[i]),
-          if (isReordering && reorderMode == VitTableReorderMode.trailing)
-            const SizedBox(width: kReorderHandleWidth),
-          if (rightSpace != null) SizedBox(width: rightSpace!),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalMargin / 2),
+        child: Row(
+          children: [
+            if (isReordering && reorderMode == VitTableReorderMode.leading)
+              const SizedBox(width: kReorderHandleWidth),
+            for (int i = 0; i < columns.length; i++) _buildColumn(i, columns[i]),
+            if (isReordering && reorderMode == VitTableReorderMode.trailing)
+              const SizedBox(width: kReorderHandleWidth),
+            if (rightSpace != null) SizedBox(width: rightSpace!),
+          ],
+        ),
       ),
     );
   }
