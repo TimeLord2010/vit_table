@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vit_table/data/constraints.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/data/models/vit_table_reorder_mode.dart';
 import 'package:vit_table/ui/components/atoms/mouse_hover_listener.dart';
 import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
 import 'package:vit_table/ui/theme/vit_table_style.dart';
@@ -17,6 +19,9 @@ class RowHighlighter extends StatelessWidget {
     required this.style,
     this.allowExpand = true,
     this.rightSpace,
+    this.isReordering = false,
+    this.reorderMode = VitTableReorderMode.row,
+    this.reorderIcon,
   });
 
   final int rowIndex;
@@ -28,6 +33,9 @@ class RowHighlighter extends StatelessWidget {
   final bool allowExpand;
 
   final double? rightSpace;
+  final bool isReordering;
+  final VitTableReorderMode reorderMode;
+  final Widget? reorderIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +60,57 @@ class RowHighlighter extends StatelessWidget {
       return rowStyle?.decoration;
     }
 
+    final cells = _cells(cells: validCells, columns: validColumns);
+
+    Widget buildHandle() {
+      final icon = reorderIcon ?? const Icon(Icons.drag_handle);
+      return MouseRegion(
+        cursor: SystemMouseCursors.grab,
+        child: ReorderableDragStartListener(
+          index: rowIndex,
+          child: SizedBox(
+            width: kReorderHandleWidth,
+            child: Center(child: icon),
+          ),
+        ),
+      );
+    }
+
+    Widget rowContent;
+    MouseCursor cursor;
+
+    if (!isReordering) {
+      cursor = SystemMouseCursors.basic;
+      rowContent = Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: cells,
+      );
+    } else {
+      switch (reorderMode) {
+        case VitTableReorderMode.row:
+          cursor = SystemMouseCursors.grab;
+          rowContent = ReorderableDragStartListener(
+            index: rowIndex,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: cells,
+            ),
+          );
+        case VitTableReorderMode.leading:
+          cursor = SystemMouseCursors.basic;
+          rowContent = Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [buildHandle(), ...cells],
+          );
+        case VitTableReorderMode.trailing:
+          cursor = SystemMouseCursors.basic;
+          rowContent = Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [...cells, buildHandle()],
+          );
+      }
+    }
+
     return MouseHoverListener(
       builder: (isMouseOver, child) {
         return Container(
@@ -61,14 +120,8 @@ class RowHighlighter extends StatelessWidget {
           child: child,
         );
       },
-      cursor: SystemMouseCursors.basic,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _cells(
-          cells: validCells,
-          columns: validColumns,
-        ),
-      ),
+      cursor: cursor,
+      child: rowContent,
     );
   }
 

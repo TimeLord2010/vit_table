@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/data/models/vit_table_reorder_mode.dart';
 import 'package:vit_table/ui/components/molecules/rows_manager.dart';
 import 'package:vit_table/ui/components/molecules/vit_table_headers.dart';
 import 'package:vit_table/ui/components/organisms/page_navigator.dart';
@@ -30,6 +31,10 @@ class VitTable extends StatelessWidget {
     this.isAscSort = true,
     this.scrollbarBuilder,
     this.padding,
+    this.isReordering = false,
+    this.onReorder,
+    this.reorderMode = VitTableReorderMode.row,
+    this.reorderIcon,
   });
 
   final List<VitTableColumn> columns;
@@ -43,6 +48,20 @@ class VitTable extends StatelessWidget {
   final RawScrollbar Function(ScrollController? controller, Widget child)?
       scrollbarBuilder;
   final EdgeInsets? padding;
+
+  /// When true, rows can be dragged to reorder them.
+  final bool isReordering;
+
+  /// Called when the user drops a row at a new position.
+  final void Function(int oldIndex, int newIndex)? onReorder;
+
+  /// Controls where the drag handle is placed. Defaults to [VitTableReorderMode.row],
+  /// which makes the entire row draggable.
+  final VitTableReorderMode reorderMode;
+
+  /// Icon shown as the drag handle when [reorderMode] is [VitTableReorderMode.leading]
+  /// or [VitTableReorderMode.trailing]. Defaults to [Icons.drag_handle].
+  final Widget? reorderIcon;
 
   bool get hasPaginator {
     return currentPageIndex != null &&
@@ -196,6 +215,10 @@ class VitTable extends StatelessWidget {
             width: width,
             rightSpace: rightSpace,
             padding: padding,
+            isReordering: isReordering,
+            onReorder: onReorder,
+            reorderMode: reorderMode,
+            reorderIcon: reorderIcon,
           );
           return Column(
             children: [
@@ -206,6 +229,8 @@ class VitTable extends StatelessWidget {
                 isAscSort: isAscSort,
                 rightSpace: rightSpace,
                 allowExpand: !hasHorizontalScroll,
+                isReordering: isReordering,
+                reorderMode: reorderMode,
               ),
               switch (constraints.maxHeight.isInfinite) {
                 true => rows,

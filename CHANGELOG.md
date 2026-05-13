@@ -1,3 +1,8 @@
+## 3.2.0
+
+- FEAT: Added row reordering via drag and drop. New parameters on `VitTable`: `isReordering`, `onReorder`, `reorderMode` (`VitTableReorderMode.row`, `leading`, `trailing`), and `reorderIcon`.
+- FEAT: Added `VitTableReorderMode` enum to control whether the entire row or a dedicated handle icon (leading or trailing) is the drag target.
+
 ## 3.1.0
 
 - FEAT: Added optional `padding` parameter to `VitTable` to apply padding to the internal scroll widget.

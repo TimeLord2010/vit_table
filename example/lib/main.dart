@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/data/models/vit_table_reorder_mode.dart';
 import 'package:vit_table/data/models/vit_table_row.dart';
 import 'package:vit_table/ui/components/organisms/vit_table.dart';
 import 'package:vit_table/ui/theme/header_style.dart';
@@ -34,6 +35,16 @@ class _MyAppState extends State<MyApp> {
 
   bool enablePageNavigator = false;
   int currentPage = 0;
+
+  List<String> reorderableItems = [
+    'Alpha',
+    'Beta',
+    'Gamma',
+    'Delta',
+    'Epsilon'
+  ];
+  VitTableReorderMode reorderMode = VitTableReorderMode.row;
+  IconData reorderIconData = Icons.drag_handle;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +101,10 @@ class _MyAppState extends State<MyApp> {
                     const Text('Large table'),
                     const SizedBox(height: 5),
                     _wideTable(),
+                    const SizedBox(height: 30),
+                    const Text('Reorderable table:'),
+                    const SizedBox(height: 5),
+                    _reorderableSection(),
                   ],
                 ),
               ),
@@ -263,6 +278,92 @@ class _MyAppState extends State<MyApp> {
     }
     profiles.sort(sortFn);
     setState(() {});
+  }
+
+  static const _reorderIcons = [
+    (Icons.drag_handle, 'drag_handle'),
+    (Icons.unfold_more, 'unfold_more'),
+    (Icons.swap_vert, 'swap_vert'),
+    (Icons.menu, 'menu'),
+  ];
+
+  Widget _reorderableSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SegmentedButton<VitTableReorderMode>(
+              segments: const [
+                ButtonSegment(
+                  value: VitTableReorderMode.leading,
+                  icon: Icon(Icons.first_page),
+                  label: Text('Leading'),
+                ),
+                ButtonSegment(
+                  value: VitTableReorderMode.row,
+                  icon: Icon(Icons.select_all),
+                  label: Text('Row'),
+                ),
+                ButtonSegment(
+                  value: VitTableReorderMode.trailing,
+                  icon: Icon(Icons.last_page),
+                  label: Text('Trailing'),
+                ),
+              ],
+              selected: {reorderMode},
+              onSelectionChanged: (value) =>
+                  setState(() => reorderMode = value.first),
+            ),
+            if (reorderMode != VitTableReorderMode.row)
+              DropdownButton<IconData>(
+                value: reorderIconData,
+                items: [
+                  for (final (icon, label) in _reorderIcons)
+                    DropdownMenuItem(
+                      value: icon,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon),
+                          const SizedBox(width: 8),
+                          Text(label),
+                        ],
+                      ),
+                    ),
+                ],
+                onChanged: (value) => setState(() => reorderIconData = value!),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        VitTable(
+          isReordering: true,
+          reorderMode: reorderMode,
+          reorderIcon: reorderMode != VitTableReorderMode.row
+              ? Icon(reorderIconData)
+              : null,
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              final item = reorderableItems.removeAt(oldIndex);
+              reorderableItems.insert(newIndex, item);
+            });
+          },
+          columns: [
+            VitTableColumn(title: const Text('Position'), width: 100),
+            VitTableColumn(title: const Text('Name'), flex: 1),
+          ],
+          rows: [
+            for (var (index, name) in reorderableItems.indexed)
+              VitTableRow(cells: [Text('${index + 1}'), Text(name)]),
+          ],
+        ),
+      ],
+    );
   }
 
   VitTable _simpleTable() {

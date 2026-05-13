@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vit_table/data/constraints.dart';
 import 'package:vit_table/data/models/vit_table_column.dart';
+import 'package:vit_table/data/models/vit_table_reorder_mode.dart';
 import 'package:vit_table/ui/components/atoms/vit_button.dart';
 import 'package:vit_table/ui/components/atoms/vit_table_cell.dart';
 import 'package:vit_table/ui/theme/colors.dart';
@@ -18,6 +19,8 @@ class VitTableHeaders extends StatelessWidget {
     this.isAscSort = true,
     this.rightSpace,
     this.allowExpand = true,
+    this.isReordering = false,
+    this.reorderMode = VitTableReorderMode.row,
   });
 
   final List<VitTableColumn> columns;
@@ -28,6 +31,8 @@ class VitTableHeaders extends StatelessWidget {
 
   /// Indicates that headers can expand.
   final bool allowExpand;
+  final bool isReordering;
+  final VitTableReorderMode reorderMode;
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +47,12 @@ class VitTableHeaders extends StatelessWidget {
       ),
       child: Row(
         children: [
+          if (isReordering && reorderMode == VitTableReorderMode.leading)
+            const SizedBox(width: kReorderHandleWidth),
           for (int i = 0; i < columns.length; i++) _buildColumn(i, columns[i]),
-          if (rightSpace != null) SizedBox(width: rightSpace!)
+          if (isReordering && reorderMode == VitTableReorderMode.trailing)
+            const SizedBox(width: kReorderHandleWidth),
+          if (rightSpace != null) SizedBox(width: rightSpace!),
         ],
       ),
     );
